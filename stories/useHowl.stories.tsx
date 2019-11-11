@@ -9,7 +9,7 @@ import sound2mp3 from './static/audio/sound2.mp3'
 import sound2web from './static/audio/sound2.webm'
 
 export default {
-  title: 'useHowler',
+  title: 'useHowl',
 };
 
 export const badSRC = () => {
@@ -52,7 +52,7 @@ export const toggleStop = () => {
       <button onClick={() => setStop(!stop)}>
         {stop ? 'Start' : 'Stop'}
       </button>
-      <Play howl={howl} stop={stop}>{
+      <Play howl={howl} stop={stop} onStop={action('onStop')} onPlay={action('onPlay')}>{
         ({ playing }) => <>Playing: {playing().toString()}</>
       }</Play>
     </>
@@ -110,7 +110,7 @@ export const toggleFade = () => {
   )
 }
 
-export const simpleSprit = () => {
+export const simpleSprite = () => {
   const [digit, setDigit] = useState(1)
   const [loop, setLoop] = useState(false)
   const { howl, state } = useHowl({
@@ -176,6 +176,18 @@ export const complexSprite = () => {
       <button onClick={() => setPlayBeat(!playBeat)}>
         {playBeat ? 'Pause Beat' : 'Play Beat'}
       </button>
+      <button onClick={() => {
+        const now = Date.now()
+        setDigits(digits => [...digits,
+          { digit: 5, time: now },
+          { digit: 4, time: now + 1 },
+          { digit: 3, time: now + 2 },
+          { digit: 2, time: now + 3 },
+          { digit: 1, time: now + 4 },
+        ])
+      }}>
+        Play all
+      </button>
       <div>
         <Play
           howl={howl}
@@ -198,7 +210,7 @@ export const complexSprite = () => {
               return [...digits.slice(0, targetIndex), ...digits.slice(targetIndex + 1)]
             })}
           >
-            {({ duration, seek }) =>
+            {({ duration }) =>
               <p>Playing {digit} for {duration()}</p>
             }
           </Play>

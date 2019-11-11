@@ -65,8 +65,7 @@ When deciding to use Howler in a React project, a quick Google Search brings you
 There are a few issues that make ReactHowler unsuitable for my needs:
 
 - No support for playing multiple sounds on one Howl instance
-- No handling of dynamic callbacks
-- No support for sprite sheets
+- No support for audio sprites
 - If you want to do more than the very basic API, you must break out the howler instance using refs
 - Use of componentWillReceiveProps
 

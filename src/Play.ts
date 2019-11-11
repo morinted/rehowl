@@ -212,41 +212,41 @@ export default function Play(props: Props) {
   )
 
   useEffect(() => {
-    if (!howl || !playId) return
+    if (!howl || !playId || !unlocked) return
     if (mute === undefined) return
     howl.mute(mute, playId)
-  }, [howl, playId, mute])
+  }, [howl, playId, unlocked, mute])
 
   useEffect(() => {
-    if (!howl || !playId) return
+    if (!howl || !playId || !unlocked) return
     if (volume === undefined) return
     if (howl.volume() !== volume) {
       howl.volume(volume)
     }
-  }, [howl, playId, volume])
+  }, [howl, playId, unlocked, volume])
 
   useEffect(() => {
-    if (!howl || !playId) return
+    if (!howl || !playId || !unlocked) return
     if (!fade) return
     howl.fade(...fade)
-  }, [howl, playId, JSON.stringify(fade)])
+  }, [howl, playId, unlocked, JSON.stringify(fade)])
 
   useEffect(() => {
-    if (!howl || !playId) return
+    if (!howl || !playId || !unlocked) return
     if (rate === undefined) return
     const targetRate = rate || 1
     if (howl.rate(playId) !== targetRate) {
       howl.rate(targetRate, playId)
     }
-  }, [howl, playId, rate])
+  }, [howl, playId, unlocked, rate])
 
   useEffect(() => {
-    if (!howl || !playId) return
+    if (!howl || !playId || !unlocked) return
     if (loop === undefined) return
     if (howl.loop(playId) !== loop) {
       howl.loop(loop, playId)
     }
-  }, [howl, playId, loop])
+  }, [howl, playId, unlocked, loop])
 
   const duration = useCallback(() => {
     if (!howl || !playId) return 0
@@ -264,7 +264,6 @@ export default function Play(props: Props) {
     }
     return position
   }, [howl, playId])
-
   const getVolume = useCallback(() => {
     if (!howl || !playId) return 0
     const volume = howl.volume(playId)

@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["es6", "dom"],
+    "lib": [
+      "es6",
+      "dom"
+    ],
     "module": "commonjs",
     "esModuleInterop": true,
     "declaration": true,
@@ -10,6 +13,11 @@
     "jsx": "react",
     "moduleResolution": "node"
   },
-  "include": ["src"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "stories",
+  ]
 }

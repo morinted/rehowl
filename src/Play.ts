@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import useForceUpdate from './useForceUpdate'
 
 type SoundInfo = {
   playing: () => boolean
@@ -33,6 +34,7 @@ type Props = {
 export default function Play(props: Props) {
   const { howl, pause, sprite, mute, volume, fade, stop, rate, loop, children } = props
 
+  const forceUpdate = useForceUpdate()
   const [playId, setPlayId] = useState<null | number>(null)
 
   // We use refs for the callbacks so that they can be dynamic.
@@ -82,13 +84,7 @@ export default function Play(props: Props) {
     if (!howl) return
     let currentPlayId: undefined | number
 
-    const playHandlers =
-      [
-        ['play', onPlay],
-        ['playerror', onPlayError]
-      ]
-
-    // We have to set up the play even handler before playing in order to catch the event.
+    // We have to set up the play even handler before playing in order to catch the starting event.
     howl.on('play', id => {
       if (id !== currentPlayId) return
       if (onPlay.current) {
@@ -103,7 +99,13 @@ export default function Play(props: Props) {
     })
 
     // Play the sound and get its ID.
+    const startPlaying = !pause && !stop
+
     currentPlayId = howl.play(sprite)
+
+    if (!startPlaying) {
+      howl.pause(currentPlayId)
+    }
 
     howl.on('pause', id => {
       if (id !== currentPlayId) return
@@ -114,15 +116,15 @@ export default function Play(props: Props) {
 
     howl.on('end', id => {
       if (id !== currentPlayId) return
-      if (onPause.current) {
-        onPause.current()
+      if (onEnd.current) {
+        onEnd.current()
       }
     })
 
     howl.on('stop', id => {
       if (id !== currentPlayId) return
-      if (onPause.current) {
-        onPause.current()
+      if (onStop.current) {
+        onStop.current()
       }
     })
     setPlayId(currentPlayId)
@@ -159,6 +161,7 @@ export default function Play(props: Props) {
     })
 
     return () => {
+      howl.stop(currentPlayId)
       howl.off('play', undefined, currentPlayId)
       howl.off('playerror', undefined, currentPlayId)
       howl.off('pause', undefined, currentPlayId)
@@ -169,19 +172,23 @@ export default function Play(props: Props) {
       howl.off('rate', undefined, currentPlayId)
       howl.off('seek', undefined, currentPlayId)
       howl.off('fade', undefined, currentPlayId)
+      setPlayId(null)
     }
-  }, [howl])
+  }, [howl, sprite])
 
   useEffect(() => {
     if (!howl || !playId) return
     if (stop) {
       howl.stop(playId)
+      forceUpdate()
       return
     }
     if (howl.playing(playId) && pause) {
       howl.pause(playId)
+      forceUpdate()
     } else if (!howl.playing(playId) && !pause) {
       howl.play(playId)
+      forceUpdate()
     }
   }, [howl, playId, pause, stop])
 

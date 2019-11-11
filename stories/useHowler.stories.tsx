@@ -44,6 +44,22 @@ export const mountUnmountPlay = () => {
   )
 }
 
+export const toggleStop = () => {
+  const { howl, state } = useHowl({ src: sound1 })
+  const [stop, setStop] = useState(true)
+  return (
+    <>
+      <p>State: {state}</p>
+      <button onClick={() => setStop(!stop)}>
+        {stop ? 'Start' : 'Stop'}
+      </button>
+      <Play howl={howl} stop={stop}>{
+        ({ playing }) => <>Playing: {playing().toString()}</>
+      }</Play>
+    </>
+  )
+}
+
 export const togglePause = () => {
   const { howl, state } = useHowl({ src: sound1 })
   const [play, setPlay] = useState(false)

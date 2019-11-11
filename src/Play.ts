@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import useForceUpdate from './useForceUpdate'
 
 type SoundInfo = {
@@ -33,9 +33,10 @@ type Props = {
 
 export default function Play(props: Props) {
   const { howl, pause, sprite, mute, volume, fade, stop, rate, loop, children } = props
-
   const forceUpdate = useForceUpdate()
+
   const [playId, setPlayId] = useState<null | number>(null)
+  const [playing, setPlaying] = useState(true)
 
   // We use refs for the callbacks so that they can be dynamic.
   const onPlay = useRef<null | Function>(null)
@@ -84,7 +85,22 @@ export default function Play(props: Props) {
     if (!howl) return
     let currentPlayId: undefined | number
 
-    // We have to set up the play even handler before playing in order to catch the starting event.
+    // Play the sound and get its ID.
+    const startPlaying = !pause && !stop
+
+    currentPlayId = howl.play(sprite)
+    setPlayId(currentPlayId)
+
+    if (!startPlaying) {
+      howl.pause(currentPlayId)
+      setPlaying(false)
+    }
+
+    howl.once('play', id => {
+      // Update children on initial play.
+      if (id !== currentPlayId) return
+      forceUpdate()
+    })
     howl.on('play', id => {
       if (id !== currentPlayId) return
       if (onPlay.current) {
@@ -97,16 +113,6 @@ export default function Play(props: Props) {
         onPlayError.current()
       }
     })
-
-    // Play the sound and get its ID.
-    const startPlaying = !pause && !stop
-
-    currentPlayId = howl.play(sprite)
-
-    if (!startPlaying) {
-      howl.pause(currentPlayId)
-    }
-
     howl.on('pause', id => {
       if (id !== currentPlayId) return
       if (onPause.current) {
@@ -127,7 +133,6 @@ export default function Play(props: Props) {
         onStop.current()
       }
     })
-    setPlayId(currentPlayId)
 
     howl.on('mute', id => {
       if (id !== currentPlayId) return
@@ -162,6 +167,7 @@ export default function Play(props: Props) {
 
     return () => {
       howl.stop(currentPlayId)
+
       howl.off('play', undefined, currentPlayId)
       howl.off('playerror', undefined, currentPlayId)
       howl.off('pause', undefined, currentPlayId)
@@ -177,20 +183,27 @@ export default function Play(props: Props) {
   }, [howl, sprite])
 
   useEffect(() => {
+    /**
+     * Use playing in state because queued events (like in the above useEffect)
+     * will not apply immediately, so it's possible for us to attempt playing
+     * twice when the sound is initialized. This causes some issues with Howler.
+     */
     if (!howl || !playId) return
     if (stop) {
       howl.stop(playId)
-      forceUpdate()
+      setPlaying(false)
       return
     }
-    if (howl.playing(playId) && pause) {
+    if (playing && pause) {
       howl.pause(playId)
-      forceUpdate()
-    } else if (!howl.playing(playId) && !pause) {
+      setPlaying(false)
+    } else if (!playing && !pause) {
       howl.play(playId)
-      forceUpdate()
+      setPlaying(true)
     }
-  }, [howl, playId, pause, stop])
+  },
+    [howl, playId, playing, pause, stop]
+  )
 
   useEffect(() => {
     if (!howl || !playId) return
@@ -229,16 +242,27 @@ export default function Play(props: Props) {
     }
   }, [howl, playId, loop])
 
+  const duration = useCallback(() => {
+    if (!howl || !playId) return 0
+    return howl.duration(playId)
+  }, [howl, playId])
+  const getPlaying = useCallback(() => {
+    if (!howl || !playId) return playing
+    return howl.playing(playId)
+  }, [howl, playId])
+  const seek = useCallback(() => {
+    if (!howl || !playId) return 0
+    const position = howl.seek(playId)
+    if (typeof position !== 'number') {
+      return 0
+    }
+    return position
+  }, [howl, playId])
+
   if (!children || !playId || !howl) return null
   return children({
-    duration: () => howl.duration(playId),
-    playing: () => howl.playing(playId),
-    seek: () => {
-      const position = howl.seek(playId)
-      if (typeof position !== 'number') {
-        return 0
-      }
-      return position
-    }
+    duration,
+    playing: getPlaying,
+    seek
   })
 }

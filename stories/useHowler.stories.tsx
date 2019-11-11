@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { action } from '@storybook/addon-actions'
-import useHowl from '../src/useHowl'
-import Play from '../src/Play'
+import { useHowl, Play } from '../src'
 // @ts-ignore
 import sound1 from './static/audio/sound1.mp3'
 // @ts-ignore

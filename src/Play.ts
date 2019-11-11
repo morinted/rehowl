@@ -32,7 +32,7 @@ type Props = {
 }
 
 export default function Play(props: Props) {
-  const { howl, pause, sprite, mute, volume, fade, stop, rate, loop, children } = props
+  const { howl, pause, sprite, mute, volume, seek, fade, stop, rate, loop, children } = props
 
   const [playId, setPlayId] = useState<null | number>(null)
   const [playing, setPlaying] = useState(true)
@@ -221,14 +221,21 @@ export default function Play(props: Props) {
     if (!howl || !playId || !unlocked) return
     if (volume === undefined) return
     if (howl.volume() !== volume) {
-      howl.volume(volume)
+      howl.volume(volume, playId)
     }
   }, [howl, playId, unlocked, volume])
 
   useEffect(() => {
     if (!howl || !playId || !unlocked) return
+    if (seek === undefined) return
+    howl.seek(seek, playId)
+  }, [howl, playId, unlocked, seek])
+
+  useEffect(() => {
+    if (!howl || !playId || !unlocked) return
     if (!fade) return
-    howl.fade(...fade)
+    const [from, to, duration] = fade
+    howl.fade(from, to, duration, playId)
   }, [howl, playId, unlocked, JSON.stringify(fade)])
 
   useEffect(() => {
@@ -250,13 +257,14 @@ export default function Play(props: Props) {
 
   const duration = useCallback(() => {
     if (!howl || !playId) return 0
-    return howl.duration(playId)
+    if (sprite) return howl.duration(playId)
+    return howl.duration()
   }, [howl, playId])
   const getPlaying = useCallback(() => {
     if (!howl || !playId) return playing
     return howl.playing(playId)
   }, [howl, playId])
-  const seek = useCallback(() => {
+  const getSeek = useCallback(() => {
     if (!howl || !playId) return 0
     const position = howl.seek(playId)
     if (typeof position !== 'number') {
@@ -277,7 +285,7 @@ export default function Play(props: Props) {
   return children({
     duration,
     playing: getPlaying,
-    seek,
+    seek: getSeek,
     volume: getVolume,
   })
 }

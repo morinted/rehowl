@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
-import useForceUpdate from './useForceUpdate'
 
 type SoundInfo = {
   playing: () => boolean
   duration: () => number
   seek: () => number
+  volume: () => number
 }
 
 type Props = {
@@ -33,10 +33,11 @@ type Props = {
 
 export default function Play(props: Props) {
   const { howl, pause, sprite, mute, volume, fade, stop, rate, loop, children } = props
-  const forceUpdate = useForceUpdate()
 
   const [playId, setPlayId] = useState<null | number>(null)
   const [playing, setPlaying] = useState(true)
+  const [stopped, setStopped] = useState(false)
+  const [unlocked, setUnlocked] = useState(false)
 
   // We use refs for the callbacks so that they can be dynamic.
   const onPlay = useRef<null | Function>(null)
@@ -99,7 +100,7 @@ export default function Play(props: Props) {
     howl.once('play', id => {
       // Update children on initial play.
       if (id !== currentPlayId) return
-      forceUpdate()
+      setUnlocked(true)
     })
     howl.on('play', id => {
       if (id !== currentPlayId) return
@@ -188,21 +189,26 @@ export default function Play(props: Props) {
      * will not apply immediately, so it's possible for us to attempt playing
      * twice when the sound is initialized. This causes some issues with Howler.
      */
-    if (!howl || !playId) return
+    if (!howl || !playId || !unlocked) return
     if (stop) {
-      howl.stop(playId)
-      setPlaying(false)
+      if (!stopped) {
+        howl.stop(playId)
+        setStopped(true)
+        setPlaying(false)
+      }
       return
     }
     if (playing && pause) {
       howl.pause(playId)
+      setStopped(false)
       setPlaying(false)
     } else if (!playing && !pause) {
       howl.play(playId)
+      setStopped(false)
       setPlaying(true)
     }
   },
-    [howl, playId, playing, pause, stop]
+    [howl, playId, stopped, unlocked, playing, pause, stop]
   )
 
   useEffect(() => {
@@ -259,10 +265,20 @@ export default function Play(props: Props) {
     return position
   }, [howl, playId])
 
+  const getVolume = useCallback(() => {
+    if (!howl || !playId) return 0
+    const volume = howl.volume(playId)
+    if (typeof volume !== 'number') {
+      return 0
+    }
+    return volume
+  }, [howl, playId])
+
   if (!children || !playId || !howl) return null
   return children({
     duration,
     playing: getPlaying,
-    seek
+    seek,
+    volume: getVolume,
   })
 }

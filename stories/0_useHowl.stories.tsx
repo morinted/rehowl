@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { action } from '@storybook/addon-actions'
 import { useHowl, Play } from '../src'
 // @ts-ignore
@@ -9,21 +9,8 @@ import sound2mp3 from './static/audio/sound2.mp3'
 import sound2web from './static/audio/sound2.webm'
 
 export default {
-  title: 'useHowl',
+  title: 'Hook: useHowl',
 };
-
-export const badSRC = () => {
-  const { howl, state, error } = useHowl({ src: 'fake' })
-  return (
-    <>
-      {error && <p>Error: {[error.id, error.message].filter(x => x).join(' ')} </p>}
-      <p>State: {state}</p>
-      <Play
-        howl={howl}
-      />
-    </>
-  )
-}
 
 export const mountUnmountPlay = () => {
   const { howl, state } = useHowl({ src: sound1 })
@@ -36,6 +23,34 @@ export const mountUnmountPlay = () => {
       </button>
       {play &&
         <Play howl={howl}>{
+          ({ playing }) => <>Playing: {playing().toString()}</>
+        }</Play>
+      }
+    </>
+  )
+}
+
+
+export const noPreload = () => {
+  const { howl, state, load, error } = useHowl({ src: sound1, preload: false })
+  const [play, setPlay] = useState(false)
+  useEffect(() => {
+    action(state)()
+  }, [state])
+  return (
+    <>
+      <p>State: {state}</p>
+      {error && <p>Error: {[error.id, error.message].filter(x => x).join(' ')} </p>}
+      { state === 'unloaded' &&
+        <button onClick={() => load()}>
+          Load
+        </button>
+      }
+      <button onClick={() => setPlay(!play)}>
+        {play ? 'Unmount!' : 'Mount!'}
+      </button>
+      {play &&
+        <Play howl={howl} onPlayError={action('onPlayError')}>{
           ({ playing }) => <>Playing: {playing().toString()}</>
         }</Play>
       }
@@ -82,8 +97,31 @@ export const togglePause = () => {
 
 export const toggleFade = () => {
   const { howl, state } = useHowl({ src: sound1 })
-  const [fadedOut, setFadedOut] = useState<undefined | boolean>(undefined)
+  const [silent, setSilent] = useState<undefined | boolean>(undefined)
   const [fading, setFading] = useState(false)
+
+  // Request animation frames during fade.
+  const [, setTime] = useState(0)
+  const requestRef = useRef<number | null>(null)
+  const previousTimeRef = useRef(0)
+  const animate = (time: number) => {
+    if (previousTimeRef.current !== undefined) {
+      const deltaTime = time - previousTimeRef.current
+      setTime(deltaTime)
+    }
+    previousTimeRef.current = time;
+    if (fading) {
+      requestRef.current = requestAnimationFrame(animate);
+    }
+  }
+  useEffect(() => {
+    if (!fading) return
+    requestRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (requestRef.current) cancelAnimationFrame(requestRef.current)
+    }
+  }, [fading])
+
   return (
     <>
       <p>State: {state}</p>
@@ -91,21 +129,23 @@ export const toggleFade = () => {
         disabled={fading}
         onClick={() => {
           setFading(true)
-          setFadedOut(!fadedOut)
+          setSilent(!silent)
         }}
       >
         {fading ?
-          fadedOut ? 'Fading out...' : 'Fading in...' :
-          fadedOut ? 'Fade in!' : 'Fade out!'}
+          silent ? 'Fading out...' : 'Fading in...' :
+          silent ? 'Fade in!' : 'Fade out!'}
       </button>
       <Play
         howl={howl}
-        fade={fadedOut === undefined ?
-          undefined : fadedOut ?
+        fade={silent === undefined ?
+          undefined : silent ?
             [1, 0, 2000] : [0, 1, 2000]
         }
         onFade={() => setFading(false)}
-      />
+      >{
+        ({ volume }) => <p>Volume is at { (volume() * 100).toFixed(0) }%</p>
+      }</Play>
     </>
   )
 }
@@ -216,6 +256,19 @@ export const complexSprite = () => {
           </Play>
         )}
       </div>
+    </>
+  )
+}
+
+export const errorBadSRC = () => {
+  const { howl, state, error } = useHowl({ src: 'fake' })
+  return (
+    <>
+      {error && <p>Error: {[error.id, error.message].filter(x => x).join(' ')} </p>}
+      <p>State: {state}</p>
+      <Play
+        howl={howl}
+      />
     </>
   )
 }

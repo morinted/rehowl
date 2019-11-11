@@ -21,7 +21,7 @@ export default function Rehowl(props: Props) {
     xhrWithCredentials,
   } = props
 
-  const { howl, error, state } = useHowl({
+  const { howl, error, state, load } = useHowl({
     src,
     sprite,
     format,
@@ -31,5 +31,5 @@ export default function Rehowl(props: Props) {
   })
 
   if (!children || !howl) return null
-  return children({ howl, error, state })
+  return children({ howl, error, state, load })
 }

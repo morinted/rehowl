@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Howler from 'howler'
 
 export type UseHowlState = {
-  howl: null | Howl,
-  error: null | { id?: number, message: string },
-  state: 'unloaded' | 'loading' | 'loaded' | string,
+  howl: null | Howl
+  error: null | { id?: number, message: string }
+  state: 'unloaded' | 'loading' | 'loaded' | string
+  load: () => void
 }
 
 type Props = {
@@ -20,12 +21,13 @@ export default function Howl(props: Props): UseHowlState {
   const {
     src, sprite, format, html5, preload, xhrWithCredentials
   } = props
-  const howl = useRef<Howl | null>(null)
-  const [state, setState] = useState('unloaded')
+  const [howl, setHowl] = useState<Howl | null>(null)
+  const [, setState] = useState('unloaded')
   const [error, setError] = useState<null | { id?: number, message: any }>(null)
+  const [locked, setLocked] = useState(true)
 
   useEffect(() => {
-    howl.current = new Howler.Howl({
+    const newHowl = new Howler.Howl({
       src,
       sprite,
       format,
@@ -33,27 +35,39 @@ export default function Howl(props: Props): UseHowlState {
       xhrWithCredentials,
       preload,
       autoplay: false,
+      onunlock: () => {
+        setLocked(false)
+      },
       onload: () => setState('loaded'),
       onloaderror: (id, message) => setError({ id, message }),
     })
+    setHowl(newHowl)
 
     return () => {
-      if (!howl.current) return
-      howl.current.off()
-      howl.current.stop()
-      howl.current.unload()
-      howl.current = null
+      if (!newHowl) return
+      newHowl.off()
+      newHowl.stop()
+      newHowl.unload()
+      setHowl(null)
     }
   }, [])
 
-  if (!howl.current) return {
+  if (!howl) return {
     howl: null,
     error: null,
-    state: 'unloaded'
+    state: 'unloaded',
+    load: () => {},
   }
+  const state = howl.state()
   return {
-    howl: howl.current,
+    howl: howl,
     error,
-    state: howl.current.state()
+    state,
+    load:
+      state === 'unloaded' ?
+        () => {
+          howl && howl.load()
+          setState('loading')
+        } : () => {}
   }
 }

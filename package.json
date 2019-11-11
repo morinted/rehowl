@@ -4,7 +4,7 @@
   "description": "Opinionated React wrapper for Howler.js",
   "main": "lib/index.js",
   "files": [
-    "lib/**/*"
+    "/lib"
   ],
   "scripts": {
     "build": "tsc",

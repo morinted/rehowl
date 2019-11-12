@@ -93,6 +93,11 @@ export default function Play(props: Props) {
     currentPlayId = howl.play(sprite)
     setPlayId(currentPlayId)
 
+    // Initialize with the right volume.
+    if (volume) {
+      howl.volume(volume, currentPlayId)
+    }
+
     if (!startPlaying) {
       howl.pause(currentPlayId)
       setPlaying(false)

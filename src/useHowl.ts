@@ -54,7 +54,7 @@ export default function Howl(props: Props): UseHowlState {
       newHowl.stop()
       newHowl.unload()
     }
-  }, [src, JSON.stringify(sprite), JSON.stringify(format), html5, xhrWithCredentials, preload])
+  }, [JSON.stringify(src), JSON.stringify(sprite), JSON.stringify(format), html5, xhrWithCredentials, preload])
 
   if (!howl)
     return {

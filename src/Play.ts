@@ -220,9 +220,7 @@ export default function Play(props: Props) {
   useEffect(() => {
     if (!howl || !playId || !unlocked) return
     if (volume === undefined) return
-    if (howl.volume() !== volume) {
-      howl.volume(volume, playId)
-    }
+    howl.volume(volume, playId)
   }, [howl, playId, unlocked, volume])
 
   useEffect(() => {
@@ -242,18 +240,13 @@ export default function Play(props: Props) {
   useEffect(() => {
     if (!howl || !playId || !unlocked) return
     if (rate === undefined) return
-    const targetRate = rate || 1
-    if (howl.rate(playId) !== targetRate) {
-      howl.rate(targetRate, playId)
-    }
+    howl.rate(rate, playId)
   }, [howl, playId, unlocked, rate])
 
   useEffect(() => {
     if (!howl || !playId || !unlocked) return
     if (loop === undefined) return
-    if (howl.loop(playId) !== loop) {
-      howl.loop(loop, playId)
-    }
+    howl.loop(loop, playId)
   }, [howl, playId, unlocked, loop])
 
   const duration = useCallback(() => {

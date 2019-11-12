@@ -95,6 +95,35 @@ export const togglePause = () => {
   )
 }
 
+export const setVolume = () => {
+  const { howl, state } = useHowl({ src: sound1 })
+  const [play, setPlay] = useState(false)
+  const [volume, setVolume] = useState(0.5)
+  return (
+    <>
+      <p>State: {state}</p>
+      <div>
+        <label htmlFor="volume">Volume:</label>
+        <input
+          id="volume"
+          type="range"
+          min={0}
+          max={1}
+          step={0.05}
+          value={volume}
+          onChange={event => setVolume(parseFloat(event.target.value))}
+        />
+      </div>
+      <button onClick={() => setPlay(!play)}>{play ? 'Unmount <Play />' : 'Mount <Play />'}</button>
+      {play && (
+        <Play howl={howl} volume={volume} onVolume={action('onVolume')}>
+          {({ playing }) => <>Playing: {playing().toString()}</>}
+        </Play>
+      )}
+    </>
+  )
+}
+
 export const toggleMute = () => {
   const { howl, state } = useHowl({ src: sound1 })
   const [mute, setMute] = useState(true)

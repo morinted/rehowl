@@ -391,3 +391,50 @@ export const errorBadSRC = () => {
     </>
   )
 }
+
+export const swapSource = () => {
+  const srcs = ['nonexistent.mp3', sound1, sound2mp3]
+  const [useHtml5, setUseHtml5] = useState(false)
+  const [src, setSrc] = useState(srcs[0])
+  const { howl, state, error } = useHowl({ src: src, html5: useHtml5 })
+  return (
+    <>
+      <h3>Select a sound to play</h3>
+      { srcs.map(srcChoice =>
+          <div key={srcChoice}>
+            <input
+              type='radio'
+              name='source'
+              checked={srcChoice === src}
+              value={srcChoice}
+              onChange={event => {
+                if (event.target.checked) {
+                  setSrc(srcChoice)
+                }
+              }}
+            />
+            &nbsp;{ srcChoice }
+          </div>
+      )}
+      <div>
+        <input
+          type='checkbox'
+          checked={useHtml5}
+          onChange={event => setUseHtml5(event.target.checked)}
+          id='html5'
+        />
+        <label htmlFor='html5'>Use HTML 5 Audio</label>
+      </div>
+
+      <h3>Info</h3>
+      {error && <p>Error: {[error.id, error.message].filter(x => x).join(' ')} </p>}
+      <p>State: {state}</p>
+
+      <Play
+        howl={howl}
+      >{
+        ({ playing }) => <>Playing: { playing().toString() }</>
+      }</Play>
+    </>
+  )
+}

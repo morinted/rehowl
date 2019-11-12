@@ -22,9 +22,12 @@ export default function Howl(props: Props): UseHowlState {
     src, sprite, format, html5, preload, xhrWithCredentials
   } = props
   const [howl, setHowl] = useState<Howl | null>(null)
+  // Force rerender on load state changes.
   const [, setState] = useState('unloaded')
+  // Force rerender on unlock.
+  const [, setLocked] = useState(true)
+
   const [error, setError] = useState<null | { id?: number, message: any }>(null)
-  const [locked, setLocked] = useState(true)
 
   useEffect(() => {
     const newHowl = new Howler.Howl({
@@ -44,13 +47,16 @@ export default function Howl(props: Props): UseHowlState {
     setHowl(newHowl)
 
     return () => {
+      setHowl(null)
+      setState('unloaded')
+      setLocked(true)
+      setError(null)
       if (!newHowl) return
       newHowl.off()
       newHowl.stop()
       newHowl.unload()
-      setHowl(null)
     }
-  }, [])
+  }, [src, JSON.stringify(sprite), JSON.stringify(format), html5, xhrWithCredentials, preload])
 
   if (!howl) return {
     howl: null,

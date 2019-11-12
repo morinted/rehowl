@@ -195,10 +195,12 @@ export const toggleFade = () => {
 
 export const onSeekScrubberBar = () => {
   const { howl } = useHowl({ src: sound1 })
-  const [seek, setSeek] = useState(0)
+  const [targetSeek, setTargetSeek] = useState(0)
   const [pause, setPause] = useState(true)
+  const [scrubbing, setScrubbing] = useState(false)
+  const [pauseDuringScrub, setPauseDuringScrub] = useState(true)
 
-  // Request animation frames during fade.
+  // Request animation frames in order to render seek smoothly.
   const [, setTime] = useState(0)
   const requestRef = useRef<number | null>(null)
   const previousTimeRef = useRef(0)
@@ -219,17 +221,28 @@ export const onSeekScrubberBar = () => {
 
   return (
     <>
+      <div>
+        <input
+          type='checkbox'
+          checked={pauseDuringScrub}
+          onChange={event => setPauseDuringScrub(event.target.checked)}
+          id='pause-during-scrub'
+        />
+        <label htmlFor='pause-during-scrub'>Pause while scrubbing</label>
+      </div>
       <button onClick={() => setPause(pause => !pause)}>
         { pause ? '▶️' : '⏸' }
       </button>
       <Play
         howl={howl}
-        seek={seek}
-        pause={pause}
+        seek={targetSeek}
+        pause={pause || (pauseDuringScrub && scrubbing)}
         onEnd={() => setPause(true)}
         onSeek={action('onSeek')}
       >{ ({ seek, duration }) => {
-        const position = seek()
+        const position = scrubbing && targetSeek !== undefined ?
+            targetSeek :
+            seek()
         const length = duration()
         return (
           <div>
@@ -243,9 +256,11 @@ export const onSeekScrubberBar = () => {
               onChange={e => {
                 const changedPosition = parseFloat(e.target.value)
                 // Remove false positives caused by slow seek() update time.
-                if (Math.abs(position - changedPosition) < 0.5) return
-                setSeek(changedPosition)
+                setTargetSeek(changedPosition)
               }}
+
+              onMouseDown={() => setTimeout(() => setScrubbing(true), 0)}
+              onMouseUp={() => setTimeout(() => setScrubbing(false), 0)}
             />
           </div>
         )

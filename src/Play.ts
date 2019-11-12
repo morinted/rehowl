@@ -38,6 +38,7 @@ export default function Play(props: Props) {
   const [playing, setPlaying] = useState(true)
   const [stopped, setStopped] = useState(false)
   const [unlocked, setUnlocked] = useState(false)
+  const [seeking, setSeeking] = useState(false)
 
   // We use refs for the callbacks so that they can be dynamic.
   const onPlay = useRef<null | Function>(null)
@@ -155,6 +156,7 @@ export default function Play(props: Props) {
     })
     howl.on('seek', id => {
       if (id !== currentPlayId) return
+      setSeeking(false)
       if (onSeek.current) {
         onSeek.current()
       }
@@ -228,6 +230,7 @@ export default function Play(props: Props) {
   useEffect(() => {
     if (!howl || !playId || !unlocked) return
     if (seek === undefined) return
+    setSeeking(true)
     howl.seek(seek, playId)
   }, [howl, playId, unlocked, seek])
 
@@ -266,12 +269,14 @@ export default function Play(props: Props) {
   }, [howl, playId])
   const getSeek = useCallback(() => {
     if (!howl || !playId) return 0
+    // Get seek
+    if (seeking && seek !== undefined) return seek
     const position = howl.seek(playId)
     if (typeof position !== 'number') {
       return 0
     }
     return position
-  }, [howl, playId])
+  }, [howl, playId, seek, seeking])
   const getVolume = useCallback(() => {
     if (!howl || !playId) return 0
     const volume = howl.volume(playId)

@@ -209,9 +209,7 @@ export default function Play(props: Props) {
       setStopped(false)
       setPlaying(true)
     }
-  },
-    [howl, playId, stopped, unlocked, playing, pause, stop]
-  )
+  }, [howl, playId, stopped, unlocked, playing, pause, stop])
 
   useEffect(() => {
     if (!howl || !playId || !unlocked) return

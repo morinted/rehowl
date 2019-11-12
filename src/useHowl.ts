@@ -3,7 +3,7 @@ import Howler from 'howler'
 
 export type UseHowlState = {
   howl: null | Howl
-  error: null | { id?: number, message: string }
+  error: null | { id?: number; message: string }
   state: 'unloaded' | 'loading' | 'loaded' | string
   load: () => void
 }
@@ -18,16 +18,14 @@ type Props = {
 }
 
 export default function Howl(props: Props): UseHowlState {
-  const {
-    src, sprite, format, html5, preload, xhrWithCredentials
-  } = props
+  const { src, sprite, format, html5, preload, xhrWithCredentials } = props
   const [howl, setHowl] = useState<Howl | null>(null)
   // Force rerender on load state changes.
   const [, setState] = useState('unloaded')
   // Force rerender on unlock.
   const [, setLocked] = useState(true)
 
-  const [error, setError] = useState<null | { id?: number, message: any }>(null)
+  const [error, setError] = useState<null | { id?: number; message: any }>(null)
 
   useEffect(() => {
     const newHowl = new Howler.Howl({
@@ -58,22 +56,24 @@ export default function Howl(props: Props): UseHowlState {
     }
   }, [src, JSON.stringify(sprite), JSON.stringify(format), html5, xhrWithCredentials, preload])
 
-  if (!howl) return {
-    howl: null,
-    error: null,
-    state: 'unloaded',
-    load: () => {},
-  }
+  if (!howl)
+    return {
+      howl: null,
+      error: null,
+      state: 'unloaded',
+      load: () => {},
+    }
   const state = howl.state()
   return {
     howl: howl,
     error,
     state,
     load:
-      state === 'unloaded' ?
-        () => {
-          howl && howl.load()
-          setState('loading')
-        } : () => {}
+      state === 'unloaded'
+        ? () => {
+            howl && howl.load()
+            setState('loading')
+          }
+        : () => {},
   }
 }

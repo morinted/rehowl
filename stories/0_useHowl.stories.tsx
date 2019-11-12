@@ -10,7 +10,7 @@ import sound2web from './static/audio/sound2.webm'
 
 export default {
   title: 'Hook: useHowl',
-};
+}
 
 export const mountUnmountPlay = () => {
   const { howl, state } = useHowl({ src: sound1 })
@@ -18,18 +18,11 @@ export const mountUnmountPlay = () => {
   return (
     <>
       <p>State: {state}</p>
-      <button onClick={() => setPlay(!play)}>
-        {play ? 'Unmount!' : 'Mount!'}
-      </button>
-      {play &&
-        <Play howl={howl}>{
-          ({ playing }) => <>Playing: {playing().toString()}</>
-        }</Play>
-      }
+      <button onClick={() => setPlay(!play)}>{play ? 'Unmount!' : 'Mount!'}</button>
+      {play && <Play howl={howl}>{({ playing }) => <>Playing: {playing().toString()}</>}</Play>}
     </>
   )
 }
-
 
 export const noPreload = () => {
   const { howl, state, load, error } = useHowl({ src: sound1, preload: false })
@@ -41,19 +34,13 @@ export const noPreload = () => {
     <>
       <p>State: {state}</p>
       {error && <p>Error: {[error.id, error.message].filter(x => x).join(' ')} </p>}
-      { state === 'unloaded' &&
-        <button onClick={() => load()}>
-          Load
-        </button>
-      }
-      <button onClick={() => setPlay(!play)}>
-        {play ? 'Unmount!' : 'Mount!'}
-      </button>
-      {play &&
-        <Play howl={howl} onPlayError={action('onPlayError')}>{
-          ({ playing }) => <>Playing: {playing().toString()}</>
-        }</Play>
-      }
+      {state === 'unloaded' && <button onClick={() => load()}>Load</button>}
+      <button onClick={() => setPlay(!play)}>{play ? 'Unmount!' : 'Mount!'}</button>
+      {play && (
+        <Play howl={howl} onPlayError={action('onPlayError')}>
+          {({ playing }) => <>Playing: {playing().toString()}</>}
+        </Play>
+      )}
     </>
   )
 }
@@ -64,12 +51,10 @@ export const toggleStop = () => {
   return (
     <>
       <p>State: {state}</p>
-      <button onClick={() => setStop(!stop)}>
-        {stop ? 'Start' : 'Stop'}
-      </button>
-      <Play howl={howl} stop={stop} onStop={action('onStop')} onPlay={action('onPlay')}>{
-        ({ playing }) => <>Playing: {playing().toString()}</>
-      }</Play>
+      <button onClick={() => setStop(!stop)}>{stop ? 'Start' : 'Stop'}</button>
+      <Play howl={howl} stop={stop} onStop={action('onStop')} onPlay={action('onPlay')}>
+        {({ playing }) => <>Playing: {playing().toString()}</>}
+      </Play>
     </>
   )
 }
@@ -89,9 +74,9 @@ export const setRate = () => {
       <button onClick={increaseRate} disabled={rate >= 4}>
         +0.5
       </button>
-      <Play howl={howl} rate={rate} onRate={action('onRate')}>{
-        ({ playing }) => <>Playing: {playing().toString()}</>
-      }</Play>
+      <Play howl={howl} rate={rate} onRate={action('onRate')}>
+        {({ playing }) => <>Playing: {playing().toString()}</>}
+      </Play>
     </>
   )
 }
@@ -102,17 +87,10 @@ export const togglePause = () => {
   return (
     <>
       <p>State: {state}</p>
-      <button onClick={() => setPlay(!play)}>
-        {play ? 'Pause!' : 'Play!'}
-      </button>
-      <Play
-        howl={howl}
-        pause={!play}
-        onPlay={action('onPlay')}
-        onPause={action('onPause')}
-      >{
-          ({ playing }) => <>Playing: {playing().toString()}</>
-        }</Play>
+      <button onClick={() => setPlay(!play)}>{play ? 'Pause!' : 'Play!'}</button>
+      <Play howl={howl} pause={!play} onPlay={action('onPlay')} onPause={action('onPause')}>
+        {({ playing }) => <>Playing: {playing().toString()}</>}
+      </Play>
     </>
   )
 }
@@ -123,17 +101,10 @@ export const toggleMute = () => {
   return (
     <>
       <p>State: {state}</p>
-      <button onClick={() => setMute(!mute)}>
-        {mute ? 'Unmute' : 'Mute'}
-      </button>
-      <Play
-        howl={howl}
-        mute={mute}
-        onPlay={action('onPlay')}
-        onMute={action('onMute')}
-      >{
-        ({ playing }) => <>Playing: {playing().toString()}</>
-      }</Play>
+      <button onClick={() => setMute(!mute)}>{mute ? 'Unmute' : 'Mute'}</button>
+      <Play howl={howl} mute={mute} onPlay={action('onPlay')} onMute={action('onMute')}>
+        {({ playing }) => <>Playing: {playing().toString()}</>}
+      </Play>
     </>
   )
 }
@@ -152,7 +123,7 @@ export const toggleFade = () => {
       const deltaTime = time - previousTimeRef.current
       setTime(deltaTime)
     }
-    previousTimeRef.current = time;
+    previousTimeRef.current = time
     if (fading) {
       requestRef.current = requestAnimationFrame(animate)
     }
@@ -175,20 +146,15 @@ export const toggleFade = () => {
           setSilent(!silent)
         }}
       >
-        {fading ?
-          silent ? 'Fading out...' : 'Fading in...' :
-          silent ? 'Fade in!' : 'Fade out!'}
+        {fading ? (silent ? 'Fading out...' : 'Fading in...') : silent ? 'Fade in!' : 'Fade out!'}
       </button>
       <Play
         howl={howl}
-        fade={silent === undefined ?
-          undefined : silent ?
-            [1, 0, 2000] : [0, 1, 2000]
-        }
+        fade={silent === undefined ? undefined : silent ? [1, 0, 2000] : [0, 1, 2000]}
         onFade={() => setFading(false)}
-      >{
-        ({ volume }) => <p>Volume is at { (volume() * 100).toFixed(0) }%</p>
-      }</Play>
+      >
+        {({ volume }) => <p>Volume is at {(volume() * 100).toFixed(0)}%</p>}
+      </Play>
     </>
   )
 }
@@ -209,7 +175,7 @@ export const onSeekScrubberBar = () => {
       const deltaTime = time - previousTimeRef.current
       setTime(deltaTime)
     }
-    previousTimeRef.current = time;
+    previousTimeRef.current = time
     requestRef.current = requestAnimationFrame(animate)
   }
   useEffect(() => {
@@ -223,48 +189,47 @@ export const onSeekScrubberBar = () => {
     <>
       <div>
         <input
-          type='checkbox'
+          type="checkbox"
           checked={pauseDuringScrub}
           onChange={event => setPauseDuringScrub(event.target.checked)}
-          id='pause-during-scrub'
+          id="pause-during-scrub"
         />
-        <label htmlFor='pause-during-scrub'>Pause while scrubbing</label>
+        <label htmlFor="pause-during-scrub">Pause while scrubbing</label>
       </div>
-      <button onClick={() => setPause(pause => !pause)}>
-        { pause ? '▶️' : '⏸' }
-      </button>
+      <button onClick={() => setPause(pause => !pause)}>{pause ? '▶️' : '⏸'}</button>
       <Play
         howl={howl}
         seek={targetSeek}
         pause={pause || (pauseDuringScrub && scrubbing)}
         onEnd={() => setPause(true)}
         onSeek={action('onSeek')}
-      >{ ({ seek, duration }) => {
-        const position = scrubbing && targetSeek !== undefined ?
-            targetSeek :
-            seek()
-        const length = duration()
-        return (
-          <div>
-            <p>{ position.toFixed(1) } / { length.toFixed(1) }</p>
-            <input
-              type='range'
-              min={0}
-              max={length}
-              value={position}
-              step={0.1}
-              onChange={e => {
-                const changedPosition = parseFloat(e.target.value)
-                // Remove false positives caused by slow seek() update time.
-                setTargetSeek(changedPosition)
-              }}
-
-              onMouseDown={() => setTimeout(() => setScrubbing(true), 0)}
-              onMouseUp={() => setTimeout(() => setScrubbing(false), 0)}
-            />
-          </div>
-        )
-      }}</Play>
+      >
+        {({ seek, duration }) => {
+          const position = scrubbing && targetSeek !== undefined ? targetSeek : seek()
+          const length = duration()
+          return (
+            <div>
+              <p>
+                {position.toFixed(1)} / {length.toFixed(1)}
+              </p>
+              <input
+                type="range"
+                min={0}
+                max={length}
+                value={position}
+                step={0.1}
+                onChange={e => {
+                  const changedPosition = parseFloat(e.target.value)
+                  // Remove false positives caused by slow seek() update time.
+                  setTargetSeek(changedPosition)
+                }}
+                onMouseDown={() => setTimeout(() => setScrubbing(true), 0)}
+                onMouseUp={() => setTimeout(() => setScrubbing(false), 0)}
+              />
+            </div>
+          )
+        }}
+      </Play>
     </>
   )
 }
@@ -280,34 +245,31 @@ export const simpleSprite = () => {
       3: [4000, 350],
       4: [6000, 380],
       5: [8000, 340],
-    }
+    },
   })
   return (
     <>
       <p>State: {state}</p>
       <div>
-        {[1, 2, 3, 4, 5].map(digit =>
-          <button key={digit} onClick={() => {
-            setDigit(digit)
-          }}>
+        {[1, 2, 3, 4, 5].map(digit => (
+          <button
+            key={digit}
+            onClick={() => {
+              setDigit(digit)
+            }}
+          >
             {digit}
           </button>
-        )}
+        ))}
       </div>
-      <button onClick={() => setLoop(!loop)}>
-        {loop ? 'Disable Looping' : 'Enable Looping'}
-      </button>
-      <Play
-        howl={howl}
-        sprite={`${digit}`}
-        loop={loop}
-      />
+      <button onClick={() => setLoop(!loop)}>{loop ? 'Disable Looping' : 'Enable Looping'}</button>
+      <Play howl={howl} sprite={`${digit}`} loop={loop} />
     </>
   )
 }
 
 export const complexSprite = () => {
-  const [digits, setDigits] = useState<{ digit: number, time: number }[]>([])
+  const [digits, setDigits] = useState<{ digit: number; time: number }[]>([])
   const [playBeat, setPlayBeat] = useState(false)
   const { howl, state } = useHowl({
     src: [sound2web, sound2mp3],
@@ -317,63 +279,64 @@ export const complexSprite = () => {
       3: [4000, 350],
       4: [6000, 380],
       5: [8000, 340],
-      beat: [10000, 11163]
-    }
+      beat: [10000, 11163],
+    },
   })
   return (
     <>
       <p>State: {state}</p>
       <div>
-        {[1, 2, 3, 4, 5].map(digit =>
-          <button key={digit} onClick={() => {
-            setDigits(digits => [...digits, { digit, time: Date.now() }])
-          }}>
+        {[1, 2, 3, 4, 5].map(digit => (
+          <button
+            key={digit}
+            onClick={() => {
+              setDigits(digits => [...digits, { digit, time: Date.now() }])
+            }}
+          >
             {digit}
           </button>
-        )}
+        ))}
       </div>
-      <button onClick={() => setPlayBeat(!playBeat)}>
-        {playBeat ? 'Pause Beat' : 'Play Beat'}
-      </button>
-      <button onClick={() => {
-        const now = Date.now()
-        setDigits(digits => [...digits,
-          { digit: 5, time: now },
-          { digit: 4, time: now + 1 },
-          { digit: 3, time: now + 2 },
-          { digit: 2, time: now + 3 },
-          { digit: 1, time: now + 4 },
-        ])
-      }}>
+      <button onClick={() => setPlayBeat(!playBeat)}>{playBeat ? 'Pause Beat' : 'Play Beat'}</button>
+      <button
+        onClick={() => {
+          const now = Date.now()
+          setDigits(digits => [
+            ...digits,
+            { digit: 5, time: now },
+            { digit: 4, time: now + 1 },
+            { digit: 3, time: now + 2 },
+            { digit: 2, time: now + 3 },
+            { digit: 1, time: now + 4 },
+          ])
+        }}
+      >
         Play all
       </button>
       <div>
-        <Play
-          howl={howl}
-          sprite='beat'
-          loop
-          pause={!playBeat}
-        >
-          {({ playing }) =>
-            <p>Beat Playing: {playing().toString()}</p>
-          }
+        <Play howl={howl} sprite="beat" loop pause={!playBeat}>
+          {({ playing }) => <p>Beat Playing: {playing().toString()}</p>}
         </Play>
-        {digits.map(({ digit, time }, index) =>
+        {digits.map(({ digit, time }, index) => (
           <Play
             howl={howl}
             sprite={`${digit}`}
             key={time}
-            onEnd={() => setDigits(digits => {
-              const targetIndex = digits.findIndex(x => x.time === time)
-              if (targetIndex < 0) return digits
-              return [...digits.slice(0, targetIndex), ...digits.slice(targetIndex + 1)]
-            })}
-          >
-            {({ duration }) =>
-              <p>Playing {digit} for {duration()}</p>
+            onEnd={() =>
+              setDigits(digits => {
+                const targetIndex = digits.findIndex(x => x.time === time)
+                if (targetIndex < 0) return digits
+                return [...digits.slice(0, targetIndex), ...digits.slice(targetIndex + 1)]
+              })
             }
+          >
+            {({ duration }) => (
+              <p>
+                Playing {digit} for {duration()}
+              </p>
+            )}
           </Play>
-        )}
+        ))}
       </div>
     </>
   )
@@ -385,9 +348,7 @@ export const errorBadSRC = () => {
     <>
       {error && <p>Error: {[error.id, error.message].filter(x => x).join(' ')} </p>}
       <p>State: {state}</p>
-      <Play
-        howl={howl}
-      />
+      <Play howl={howl} />
     </>
   )
 }
@@ -400,41 +361,32 @@ export const swapSource = () => {
   return (
     <>
       <h3>Select a sound to play</h3>
-      { srcs.map(srcChoice =>
-          <div key={srcChoice}>
-            <input
-              type='radio'
-              name='source'
-              checked={srcChoice === src}
-              value={srcChoice}
-              onChange={event => {
-                if (event.target.checked) {
-                  setSrc(srcChoice)
-                }
-              }}
-            />
-            &nbsp;{ srcChoice }
-          </div>
-      )}
+      {srcs.map(srcChoice => (
+        <div key={srcChoice}>
+          <input
+            type="radio"
+            name="source"
+            checked={srcChoice === src}
+            value={srcChoice}
+            onChange={event => {
+              if (event.target.checked) {
+                setSrc(srcChoice)
+              }
+            }}
+          />
+          &nbsp;{srcChoice}
+        </div>
+      ))}
       <div>
-        <input
-          type='checkbox'
-          checked={useHtml5}
-          onChange={event => setUseHtml5(event.target.checked)}
-          id='html5'
-        />
-        <label htmlFor='html5'>Use HTML 5 Audio</label>
+        <input type="checkbox" checked={useHtml5} onChange={event => setUseHtml5(event.target.checked)} id="html5" />
+        <label htmlFor="html5">Use HTML 5 Audio</label>
       </div>
 
       <h3>Info</h3>
       {error && <p>Error: {[error.id, error.message].filter(x => x).join(' ')} </p>}
       <p>State: {state}</p>
 
-      <Play
-        howl={howl}
-      >{
-        ({ playing }) => <>Playing: { playing().toString() }</>
-      }</Play>
+      <Play howl={howl}>{({ playing }) => <>Playing: {playing().toString()}</>}</Play>
     </>
   )
 }

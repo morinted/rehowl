@@ -11,15 +11,7 @@ type Props = {
 }
 
 export default function Rehowl(props: Props) {
-  const {
-    children,
-    src,
-    sprite,
-    format,
-    html5,
-    preload,
-    xhrWithCredentials,
-  } = props
+  const { children, src, sprite, format, html5, preload, xhrWithCredentials } = props
 
   const { howl, error, state, load } = useHowl({
     src,

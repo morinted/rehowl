@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 
-type SoundInfo = {
+interface SoundInfo {
   playing: () => boolean
   duration: () => number
   seek: () => number
   volume: () => number
 }
 
-type Props = {
+interface Props {
   howl: null | Howl
   sprite?: string
   children?: (props: SoundInfo) => JSX.Element
@@ -31,6 +31,9 @@ type Props = {
   onRate?: () => void
 }
 
+/**
+ * Plays sounds from a howl instance.
+ */
 export default function Play(props: Props) {
   const { howl, pause, sprite, mute, volume, seek, fade, stop, rate, loop, children } = props
 

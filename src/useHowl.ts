@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react'
 import Howler from 'howler'
 
-export type UseHowlState = {
+export interface UseHowlState {
   howl: null | Howl
   error: null | { id?: number; message: string }
   state: 'unloaded' | 'loading' | 'loaded' | string
   load: () => void
 }
 
-type Props = {
+interface Props {
   src: string | string[]
   sprite?: IHowlSoundSpriteDefinition
   format?: string[]

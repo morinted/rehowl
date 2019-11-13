@@ -1,6 +1,6 @@
 import useHowl, { UseHowlState } from './useHowl'
 
-type Props = {
+interface Props {
   src: string | string[]
   sprite?: IHowlSoundSpriteDefinition
   format?: string[]

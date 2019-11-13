@@ -10,6 +10,7 @@ import sound2web from './static/audio/sound2.webm'
 
 export default {
   title: 'Hook: useHowl',
+  component: useHowl
 }
 
 export const mountUnmountPlay = () => {

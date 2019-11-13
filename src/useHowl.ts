@@ -1,24 +1,72 @@
 import { useState, useEffect } from 'react'
 import Howler from 'howler'
 
-export interface UseHowlState {
+export interface IUseHowlState {
+  /** The Howl instance. */
   howl: null | Howl
+  /** Load errors. */
   error: null | { id?: number; message: string }
+  /** Load state. */
   state: 'unloaded' | 'loading' | 'loaded' | string
+  /** Function to start loading if preload is false. */
   load: () => void
 }
 
-interface Props {
+export interface IUseHowlOptions {
+  /**
+   * The sources to the track(s) to be loaded for the sound (URLs or base64 data URIs).
+   *
+   * These should be in order of preference, howler.js will automatically load the first
+   * one that is compatible with the current browser.
+   *
+   * If your files have no extensions, you will need to explicitly specify the extension
+   * using the `format` prop.
+   */
   src: string | string[]
+  /**
+   * Define a sound sprite for the sound.
+   *
+   * The offset and duration are defined in milliseconds.
+   *
+   * A third (optional) parameter is available to set a sprite as looping, but you can just
+   * set `loop` to `true` on the `<Play />` component to achieve this as well.
+   */
   sprite?: IHowlSoundSpriteDefinition
+  /**
+   * Array of formats corresponding to the sources provided if it's not inferable from the file name.
+   */
   format?: string[]
+  /**
+   * Set to true to use html5 audio instead of Web Audio.
+   *
+   * This should be used for large audio files so that you don't have
+   * to wait for the full file to be downloaded and decoded before playing.
+   *
+   * @default false
+   */
   html5?: boolean
+  /**
+   * Set to false in order to prevent loading the file until you call the returned `load()` function.
+   *
+   * Otherwise, howler will start loading your file immediately.
+   *
+   * @default true
+   */
   preload?: boolean
+  /**
+   * Whether or not to enable the withCredentials flag on XHR requests used to fetch audio files when using Web Audio API.
+   */
   xhrWithCredentials?: boolean
 }
 
-export default function Howl(props: Props): UseHowlState {
-  const { src, sprite, format, html5, preload, xhrWithCredentials } = props
+/**
+ * A hook to get a Howl instance for use with `<Play />`.
+ *
+ * Recommended when using Rehowl from a function component. If you're
+ * using a class component, you'll need to use `<Rehowl />`.
+ */
+export default function useHowl(howlOptions: IUseHowlOptions): IUseHowlState {
+  const { src, sprite, format, html5, preload, xhrWithCredentials } = howlOptions
   const [howl, setHowl] = useState<Howl | null>(null)
   // Force rerender on load state changes.
   const [, setState] = useState('unloaded')

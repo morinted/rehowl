@@ -5,6 +5,7 @@ import sound1 from './static/audio/sound1.mp3'
 
 export default {
   title: 'Render Props: Rehowl',
+  component: Rehowl,
 }
 
 export const toggleStop = () => {

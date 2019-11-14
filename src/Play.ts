@@ -124,7 +124,10 @@ interface Props {
 export default function Play(props: Props) {
   const { howl, pause, sprite, mute, volume, seek, fade, stop, rate, loop, children } = props
 
-  const [start, setStart] = useState(false)
+  const shouldPlay = !pause && !stop
+
+  // Don't attempt to play the Howl until both pause and stop are false.
+  const [initialized, setInitialized] = useState(shouldPlay)
   const [playId, setPlayId] = useState<null | number>(null)
   const [playing, setPlaying] = useState(true)
   const [stopped, setStopped] = useState(false)
@@ -176,29 +179,22 @@ export default function Play(props: Props) {
 
   // Only load the rest of the component once the user wants to play.
   useEffect(() => {
-    if (start) return
-    if (pause || stop) return
-    setStart(true)
-  }, [start, pause, stop])
+    if (initialized) return
+    if (!shouldPlay) return
+    setInitialized(true)
+  }, [initialized, shouldPlay])
 
   useEffect(() => {
-    if (!howl || !start) return
+    if (!howl || !shouldPlay) return
     let currentPlayId: undefined | number
 
     // Play the sound and get its ID.
-    const startPlaying = !pause && !stop
-
     currentPlayId = howl.play(sprite)
     setPlayId(currentPlayId)
 
     // Initialize with the right volume.
     if (volume) {
       howl.volume(volume, currentPlayId)
-    }
-
-    if (!startPlaying) {
-      howl.pause(currentPlayId)
-      setPlaying(false)
     }
 
     howl.once('play', id => {
@@ -273,7 +269,7 @@ export default function Play(props: Props) {
 
     return () => {
       howl.stop(currentPlayId)
-      setStart(false)
+      setInitialized(false)
 
       howl.off('play', undefined, currentPlayId)
       howl.off('playerror', undefined, currentPlayId)
@@ -287,7 +283,7 @@ export default function Play(props: Props) {
       howl.off('fade', undefined, currentPlayId)
       setPlayId(null)
     }
-  }, [start, howl, sprite])
+  }, [initialized, howl, sprite])
 
   useEffect(() => {
     /**
@@ -359,7 +355,7 @@ export default function Play(props: Props) {
     return howl.duration()
   }, [howl, playId])
   const getPlaying = useCallback(() => {
-    if (!howl || !playId) return playing
+    if (!howl || !playId) return false
     return howl.playing(playId)
   }, [howl, playId])
   const getSeek = useCallback(() => {
@@ -381,7 +377,7 @@ export default function Play(props: Props) {
     return volume
   }, [howl, playId])
 
-  if (!children || !playId || !howl) return null
+  if (!children || !howl) return null
   return children({
     duration,
     playing: getPlaying,

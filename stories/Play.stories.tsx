@@ -242,11 +242,12 @@ export const seekWithScrubberBar = () => {
     requestRef.current = requestAnimationFrame(animate)
   }
   useEffect(() => {
+    if (!play) return
     requestRef.current = requestAnimationFrame(animate)
     return () => {
       if (requestRef.current) cancelAnimationFrame(requestRef.current)
     }
-  }, [])
+  }, [play])
 
   return (
     <>

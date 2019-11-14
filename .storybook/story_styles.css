@@ -1,4 +1,4 @@
-body, div, p, button {
+body, div, p, button, label, li, input {
   font-family: "Open Sans", sans-serif;
 }
 p {
@@ -6,14 +6,16 @@ p {
 }
 
 button {
+  height: 2.5rem;
+  line-height: 2.3rem;
   background-color: transparent;
   border-radius: 4px;
+  font-size: 0.9rem;
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 1px;
   border: 2px solid #69BB5F;
   color: #69BB5F;
-  padding: 0.5rem;
   margin: 0.1rem;
 }
 
@@ -21,4 +23,11 @@ button:hover {
   cursor: pointer;
   background-color: #69BB5F;
   color: white;
+}
+
+button:disabled, button:hover:disabled {
+  cursor: not-allowed;
+  border-color: #786956;
+  color: #786956;
+  background-color: transparent;
 }

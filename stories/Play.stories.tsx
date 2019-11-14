@@ -182,12 +182,13 @@ export const fade = () => {
       setTime(deltaTime)
     }
     previousTimeRef.current = time
-    if (fading) {
-      requestRef.current = requestAnimationFrame(animate)
-    }
+    requestRef.current = requestAnimationFrame(animate)
   }
   useEffect(() => {
-    if (!fading) return
+    if (!fading) {
+      if (requestRef.current) cancelAnimationFrame(requestRef.current)
+      return
+    }
     requestRef.current = requestAnimationFrame(animate)
     return () => {
       if (requestRef.current) cancelAnimationFrame(requestRef.current)
@@ -198,26 +199,25 @@ export const fade = () => {
     <>
       <p>State: {state}</p>
       <PlayPauseButton play={play} setPlay={setPlay} />
-      {play &&
-        <>
-          <button
-            disabled={fading}
-            onClick={() => {
-              setFading(true)
-              setSilent(!silent)
-            }}
-          >
-            {fading ? (silent ? 'Fading out...' : 'Fading in...') : silent ? 'Fade in!' : 'Fade out!'}
-          </button>
-          <Play
-            howl={howl}
-            fade={silent === undefined ? undefined : silent ? [1, 0, 2000] : [0, 1, 2000]}
-            onFade={() => setFading(false)}
-          >
-            {({ volume }) => <p>Volume is at {(volume() * 100).toFixed(0)}%</p>}
-          </Play>
-        </>
-      }
+      <>
+        <button
+          disabled={fading}
+          onClick={() => {
+            setFading(true)
+            setSilent(!silent)
+          }}
+        >
+          {fading ? (silent ? 'Fading out...' : 'Fading in...') : silent ? 'Fade in!' : 'Fade out!'}
+        </button>
+        <Play
+          howl={howl}
+          pause={!play}
+          fade={silent === undefined ? undefined : silent ? [1, 0, 2000] : [0, 1, 2000]}
+          onFade={() => setFading(false)}
+        >
+          {({ volume }) => <p>Volume is at {(volume() * 100).toFixed(0)}%</p>}
+        </Play>
+      </>
     </>
   )
 }
@@ -447,24 +447,26 @@ export const swapSource = () => {
       <h3>Select a sound to play</h3>
       {srcs.map(srcChoice => (
         <div key={srcChoice}>
-          <input
-            type="radio"
-            name="source"
-            checked={srcChoice === src}
-            value={srcChoice}
-            onChange={event => {
-              if (event.target.checked) {
-                setSrc(srcChoice)
-              }
-            }}
-          />
-          &nbsp;{srcChoice}
+          <label>
+            <input
+              type="radio"
+              name="source"
+              checked={srcChoice === src}
+              value={srcChoice}
+              onChange={event => {
+                if (event.target.checked) {
+                  setSrc(srcChoice)
+                }
+              }}
+            />
+            &nbsp;{srcChoice}
+          </label>
         </div>
       ))}
-      <div>
+      <label style={{ display: 'block', marginTop: '1rem' }}>
         <input type="checkbox" checked={useHtml5} onChange={event => setUseHtml5(event.target.checked)} id="html5" />
-        <label htmlFor="html5">Use HTML 5 Audio</label>
-      </div>
+        Use HTML 5 Audio
+      </label>
 
       <h3>Info</h3>
       {error && <p>Error: {[error.id, error.message].filter(x => x).join(' ')} </p>}

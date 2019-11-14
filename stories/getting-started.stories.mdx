@@ -1,0 +1,78 @@
+import { Meta, Story } from '@storybook/addon-docs/blocks'
+
+<Meta title="Rehowl|Getting Started" />
+
+# Rehowl
+
+> An opinionated React wrapper for Howler.js
+
+😍 Bring-your-own-howl
+
+⚛ React-friendly API
+
+🧼 Written in TypeScript
+
+🔗 Built with React Hooks
+
+
+
+## Installation
+
+Rehowl has react and howler as peer dependencies so that you can manage your own versions.
+
+```sh
+npm install --save-dev howler rehowl
+```
+
+```sh
+yarn add -D howler rehowl
+```
+
+## Quickstart
+
+1. Get a Howl
+    - In a function component: [`useHowl`](./?path=/docs/hooks-usehowl--page)
+    - In a class component: [`<Rehowl />`](./?path=/docs/components-rehowl--play-pause)
+2. Play sounds off the Howl with [`<Play />`](./?path=/docs/components-play--render-play)
+
+## Autoplay Examples
+
+These are just code snippets. To see live examples, [see the Play component documentation](./?path=/docs/components-play--render-play)
+
+### Hook interface
+
+The recommended method to use Rehowl is through its custom hook and `<Play />` element.
+
+Similar to Howler, you initialize a Howl and then can play sounds from it.
+
+```js
+import React from 'react'
+import { useHowl, Play } from 'rehowl'
+
+const MyComponent = () => {
+  const { howl } = useHowl({
+    src: ['sound1.mp3', 'sound1.wav']
+  })
+  return <Play howl={howl} />
+}
+```
+
+
+### Render props interface
+
+In a class component, you must use the render props pattern with `<Rehowl />`.
+
+```js
+import React, { Component } from 'react'
+import { Rehowl, Play } from 'rehowl'
+
+class MyComponent extends Component {
+  render() {
+    return (
+      <Rehowl src={[ 'sound1.mp3', 'sound1.wav' ]}>{
+        ({ howl }) => <Play howl={howl} />
+      }</Rehowl>
+    )
+  }
+}
+```

@@ -7,7 +7,7 @@ export interface IUseHowlState {
   /** Load errors. */
   error: null | { id?: number; message: string }
   /** Load state. */
-  state: 'unloaded' | 'loading' | 'loaded' | string
+  state: 'unloaded' | 'loading' | 'loaded'
   /** Function to start loading if preload is false. */
   load: () => void
 }
@@ -109,7 +109,7 @@ export default function useHowl(howlOptions: IUseHowlOptions): IUseHowlState {
       howl: null,
       error: null,
       state: 'unloaded',
-      load: () => {},
+      load: () => { },
     }
   const state = howl.state()
   return {
@@ -119,9 +119,9 @@ export default function useHowl(howlOptions: IUseHowlOptions): IUseHowlState {
     load:
       state === 'unloaded'
         ? () => {
-            howl && howl.load()
-            setState('loading')
-          }
-        : () => {},
+          howl && howl.load()
+          setState('loading')
+        }
+        : () => { },
   }
 }

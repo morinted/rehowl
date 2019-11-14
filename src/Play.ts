@@ -124,6 +124,7 @@ interface Props {
 export default function Play(props: Props) {
   const { howl, pause, sprite, mute, volume, seek, fade, stop, rate, loop, children } = props
 
+  const [start, setStart] = useState(false)
   const [playId, setPlayId] = useState<null | number>(null)
   const [playing, setPlaying] = useState(true)
   const [stopped, setStopped] = useState(false)
@@ -173,8 +174,15 @@ export default function Play(props: Props) {
     onRate.current = props.onRate || null
   }, [props.onRate])
 
+  // Only load the rest of the component once the user wants to play.
   useEffect(() => {
-    if (!howl) return
+    if (start) return
+    if (pause || stop) return
+    setStart(true)
+  }, [start, pause, stop])
+
+  useEffect(() => {
+    if (!howl || !start) return
     let currentPlayId: undefined | number
 
     // Play the sound and get its ID.
@@ -265,6 +273,7 @@ export default function Play(props: Props) {
 
     return () => {
       howl.stop(currentPlayId)
+      setStart(false)
 
       howl.off('play', undefined, currentPlayId)
       howl.off('playerror', undefined, currentPlayId)
@@ -278,7 +287,7 @@ export default function Play(props: Props) {
       howl.off('fade', undefined, currentPlayId)
       setPlayId(null)
     }
-  }, [howl, sprite])
+  }, [start, howl, sprite])
 
   useEffect(() => {
     /**

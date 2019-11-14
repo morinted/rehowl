@@ -185,16 +185,22 @@ export default function Play(props: Props) {
   }, [initialized, shouldPlay])
 
   useEffect(() => {
-    if (!howl || !shouldPlay) return
+    if (!howl || !shouldPlay || !initialized) return
     let currentPlayId: undefined | number
 
     // Play the sound and get its ID.
     currentPlayId = howl.play(sprite)
     setPlayId(currentPlayId)
 
-    // Initialize with the right volume.
-    if (volume) {
+    // Initialize with the right settings.
+    if (volume !== undefined) {
       howl.volume(volume, currentPlayId)
+    }
+    if (mute !== undefined) {
+      howl.mute(mute, currentPlayId)
+    }
+    if (rate !== undefined) {
+      howl.rate(rate, currentPlayId)
     }
 
     howl.once('play', id => {
@@ -270,7 +276,7 @@ export default function Play(props: Props) {
     return () => {
       howl.stop(currentPlayId)
       setInitialized(false)
-
+      setUnlocked(false)
       howl.off('play', undefined, currentPlayId)
       howl.off('playerror', undefined, currentPlayId)
       howl.off('pause', undefined, currentPlayId)

@@ -14,51 +14,13 @@ npm install --save-dev howler rehowl
 yarn add -D howler rehowl
 ```
 
-## Quickstart
+### Documentation and Live Examples
 
-### Hook interface
+Documentation and live examples are available at <https://tedmor.in/rehowl>
 
-The recommended method to use Rehowl is through its custom hook and `<Play />` element.
+The source of these examples is [./stories](./stories)
 
-Similar to Howler, you initialize a Howl and then can play sounds from it.
-
-```js
-import React from 'react'
-import { useHowl, Play } from 'rehowl'
-
-const MyComponent = () => {
-  const { howl, state, error } = useHowl({
-    src: ['sound1.mp3', 'sound1.wav']
-  })
-  return <Play howl={howl} />
-}
-```
-
-
-### Render props interface
-
-In a class component, you must use the render props pattern with `<Rehowl />`.
-
-```js
-import React, { Component } from 'react'
-import { Rehowl, Play } from 'rehowl'
-
-class MyComponent extends Component {
-  render() {
-    return (
-      <Rehowl src={[ 'sound1.mp3', 'sound1.wav' ]}>{
-        ({ howl, state, error }) => <Play howl={howl} />
-      }</Rehowl>
-    )
-  }
-}
-```
-
-### Examples
-
-For more examples (while documentation is still light), please see [storybook stories](./stories).
-
-## Rationale / Why not react-howler
+## Rationale
 
 When deciding to use Howler in a React project, a quick Google Search brings you to [react-howler](https://khoanguyen.me/react-howler/).
 

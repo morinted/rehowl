@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { action } from '@storybook/addon-actions'
 import { useHowl, Play } from '../src'
+import { action } from '@storybook/addon-actions'
+
 // @ts-ignore
 import sound1 from './static/audio/sound1.mp3'
 // @ts-ignore
@@ -9,17 +10,30 @@ import sound2mp3 from './static/audio/sound2.mp3'
 import sound2web from './static/audio/sound2.webm'
 
 export default {
-  title: 'Hook: useHowl',
+  title: 'Components|<Play />',
+  component: Play,
 }
 
-export const mountUnmountPlay = () => {
+const PlayPauseButton = ({ play, setPlay }) =>
+  <p>
+    <button onClick={() => setPlay(!play)}>
+      {play ? 'Pause ⏸' : 'Play ▶'}
+    </button>
+  </p>
+
+export const renderPlay = () => {
   const { howl, state } = useHowl({ src: sound1 })
   const [play, setPlay] = useState(false)
   return (
     <>
+      <p>Sound stops when the Play component is unmounted.</p>
       <p>State: {state}</p>
-      <button onClick={() => setPlay(!play)}>{play ? 'Unmount!' : 'Mount!'}</button>
-      {play && <Play howl={howl}>{({ playing }) => <>Playing: {playing().toString()}</>}</Play>}
+      <PlayPauseButton play={play} setPlay={setPlay} />
+      {play ?
+        <Play howl={howl}>
+          {({ playing }) => <>This is the child of the play component! Playing: {playing().toString()}</>}
+        </Play> : null
+      }
     </>
   )
 }
@@ -32,75 +46,83 @@ export const noPreload = () => {
   }, [state])
   return (
     <>
+      <p>The Play component will not be able to do anything until you call load.</p>
       <p>State: {state}</p>
-      {error && <p>Error: {[error.id, error.message].filter(x => x).join(' ')} </p>}
       {state === 'unloaded' && <button onClick={() => load()}>Load</button>}
-      <button onClick={() => setPlay(!play)}>{play ? 'Unmount!' : 'Mount!'}</button>
-      {play && (
+      <PlayPauseButton play={play} setPlay={setPlay} />
+      {play &&
         <Play howl={howl} onPlayError={action('onPlayError')}>
           {({ playing }) => <>Playing: {playing().toString()}</>}
         </Play>
-      )}
+      }
     </>
   )
 }
 
-export const toggleStop = () => {
+export const stop = () => {
   const { howl, state } = useHowl({ src: sound1 })
-  const [stop, setStop] = useState(true)
+  const [play, setPlay] = useState(false)
   return (
     <>
+      <p>This component is being stopped with the <code>stop</code> prop.</p>
       <p>State: {state}</p>
-      <button onClick={() => setStop(!stop)}>{stop ? 'Start' : 'Stop'}</button>
-      <Play howl={howl} stop={stop} onStop={action('onStop')} onPlay={action('onPlay')}>
+      <PlayPauseButton play={play} setPlay={setPlay} />
+      <Play howl={howl} stop={!play} onStop={action('onStop')} onPlay={action('onPlay')}>
         {({ playing }) => <>Playing: {playing().toString()}</>}
       </Play>
     </>
   )
 }
 
-export const setRate = () => {
+export const rate = () => {
   const { howl, state } = useHowl({ src: sound1 })
+  const [play, setPlay] = useState(false)
   const [rate, setRate] = useState(2)
   const decreaseRate = () => setRate(rate => Math.max(rate - 0.5, 0.5))
   const increaseRate = () => setRate(rate => Math.min(rate + 0.5, 4))
   return (
     <>
+      <p>Control the rate of playback.</p>
       <p>State: {state}</p>
       <p>Rate: {rate * 100}%</p>
-      <button onClick={decreaseRate} disabled={rate <= 0.5}>
-        -0.5
-      </button>
-      <button onClick={increaseRate} disabled={rate >= 4}>
-        +0.5
-      </button>
-      <Play howl={howl} rate={rate} onRate={action('onRate')}>
+      <PlayPauseButton play={play} setPlay={setPlay} />
+      <p>
+        <button onClick={decreaseRate} disabled={rate <= 0.5}>
+          -0.5
+        </button>
+        <button onClick={increaseRate} disabled={rate >= 4}>
+          +0.5
+        </button>
+      </p>
+      <Play howl={howl} rate={rate} onRate={action('onRate')} pause={!play}>
         {({ playing }) => <>Playing: {playing().toString()}</>}
       </Play>
     </>
   )
 }
 
-export const togglePause = () => {
+export const pause = () => {
   const { howl, state } = useHowl({ src: sound1 })
   const [play, setPlay] = useState(false)
   return (
     <>
+      <p>Control playback with the <code>pause</code> prop.</p>
       <p>State: {state}</p>
-      <button onClick={() => setPlay(!play)}>{play ? 'Pause!' : 'Play!'}</button>
+      <PlayPauseButton play={play} setPlay={setPlay} />
       <Play howl={howl} pause={!play} onPlay={action('onPlay')} onPause={action('onPause')}>
-        {({ playing }) => <>Playing: {playing().toString()}</>}
+        {({ playing }) => <p>Playing: {playing().toString()}</p>}
       </Play>
     </>
   )
 }
 
-export const setVolume = () => {
+export const volume = () => {
   const { howl, state } = useHowl({ src: sound1 })
   const [play, setPlay] = useState(false)
   const [volume, setVolume] = useState(0.5)
   return (
     <>
+      <p>Set the volume. The Play element can change before and during playback.</p>
       <p>State: {state}</p>
       <div>
         <label htmlFor="volume">Volume:</label>
@@ -114,7 +136,7 @@ export const setVolume = () => {
           onChange={event => setVolume(parseFloat(event.target.value))}
         />
       </div>
-      <button onClick={() => setPlay(!play)}>{play ? 'Unmount <Play />' : 'Mount <Play />'}</button>
+      <PlayPauseButton play={play} setPlay={setPlay} />
       {play && (
         <Play howl={howl} volume={volume} onVolume={action('onVolume')}>
           {({ playing }) => <>Playing: {playing().toString()}</>}
@@ -124,22 +146,29 @@ export const setVolume = () => {
   )
 }
 
-export const toggleMute = () => {
+export const mute = () => {
   const { howl, state } = useHowl({ src: sound1 })
+  const [play, setPlay] = useState(false)
   const [mute, setMute] = useState(true)
   return (
     <>
       <p>State: {state}</p>
-      <button onClick={() => setMute(!mute)}>{mute ? 'Unmute' : 'Mute'}</button>
-      <Play howl={howl} mute={mute} onPlay={action('onPlay')} onMute={action('onMute')}>
-        {({ playing }) => <>Playing: {playing().toString()}</>}
-      </Play>
+      <PlayPauseButton play={play} setPlay={setPlay} />
+      <p>
+        {mute ? 'Muted.' : 'Unmuted.'} <button onClick={() => setMute(!mute)}>{mute ? 'Unmute 🔊' : 'Mute 🔇'}</button>
+      </p>
+      {play &&
+        <Play howl={howl} mute={mute} onPlay={action('onPlay')} onMute={action('onMute')}>
+          {({ playing }) => <>Playing: {playing().toString()}</>}
+        </Play>
+      }
     </>
   )
 }
 
-export const toggleFade = () => {
+export const fade = () => {
   const { howl, state } = useHowl({ src: sound1 })
+  const [play, setPlay] = useState(false)
   const [silent, setSilent] = useState<undefined | boolean>(undefined)
   const [fading, setFading] = useState(false)
 
@@ -153,12 +182,13 @@ export const toggleFade = () => {
       setTime(deltaTime)
     }
     previousTimeRef.current = time
-    if (fading) {
-      requestRef.current = requestAnimationFrame(animate)
-    }
+    requestRef.current = requestAnimationFrame(animate)
   }
   useEffect(() => {
-    if (!fading) return
+    if (!fading) {
+      if (requestRef.current) cancelAnimationFrame(requestRef.current)
+      return
+    }
     requestRef.current = requestAnimationFrame(animate)
     return () => {
       if (requestRef.current) cancelAnimationFrame(requestRef.current)
@@ -168,30 +198,34 @@ export const toggleFade = () => {
   return (
     <>
       <p>State: {state}</p>
-      <button
-        disabled={fading}
-        onClick={() => {
-          setFading(true)
-          setSilent(!silent)
-        }}
-      >
-        {fading ? (silent ? 'Fading out...' : 'Fading in...') : silent ? 'Fade in!' : 'Fade out!'}
-      </button>
-      <Play
-        howl={howl}
-        fade={silent === undefined ? undefined : silent ? [1, 0, 2000] : [0, 1, 2000]}
-        onFade={() => setFading(false)}
-      >
-        {({ volume }) => <p>Volume is at {(volume() * 100).toFixed(0)}%</p>}
-      </Play>
+      <PlayPauseButton play={play} setPlay={setPlay} />
+      <>
+        <button
+          disabled={fading}
+          onClick={() => {
+            setFading(true)
+            setSilent(!silent)
+          }}
+        >
+          {fading ? (silent ? 'Fading out...' : 'Fading in...') : silent ? 'Fade in!' : 'Fade out!'}
+        </button>
+        <Play
+          howl={howl}
+          pause={!play}
+          fade={silent === undefined ? undefined : silent ? [1, 0, 2000] : [0, 1, 2000]}
+          onFade={() => setFading(false)}
+        >
+          {({ volume }) => <p>Volume is at {(volume() * 100).toFixed(0)}%</p>}
+        </Play>
+      </>
     </>
   )
 }
 
-export const onSeekScrubberBar = () => {
+export const seekWithScrubberBar = () => {
   const { howl } = useHowl({ src: sound1 })
   const [targetSeek, setTargetSeek] = useState(0)
-  const [pause, setPause] = useState(true)
+  const [play, setPlay] = useState(false)
   const [scrubbing, setScrubbing] = useState(false)
   const [pauseDuringScrub, setPauseDuringScrub] = useState(true)
 
@@ -208,11 +242,12 @@ export const onSeekScrubberBar = () => {
     requestRef.current = requestAnimationFrame(animate)
   }
   useEffect(() => {
+    if (!play) return
     requestRef.current = requestAnimationFrame(animate)
     return () => {
       if (requestRef.current) cancelAnimationFrame(requestRef.current)
     }
-  }, [])
+  }, [play])
 
   return (
     <>
@@ -225,12 +260,12 @@ export const onSeekScrubberBar = () => {
         />
         <label htmlFor="pause-during-scrub">Pause while scrubbing</label>
       </div>
-      <button onClick={() => setPause(pause => !pause)}>{pause ? '▶️' : '⏸'}</button>
+      <PlayPauseButton play={play} setPlay={setPlay} />
       <Play
         howl={howl}
         seek={targetSeek}
-        pause={pause || (pauseDuringScrub && scrubbing)}
-        onEnd={() => setPause(true)}
+        pause={!play || (pauseDuringScrub && scrubbing)}
+        onEnd={() => setPlay(true)}
         onSeek={action('onSeek')}
       >
         {({ seek, duration }) => {
@@ -263,8 +298,8 @@ export const onSeekScrubberBar = () => {
   )
 }
 
-export const simpleSprite = () => {
-  const [digit, setDigit] = useState(1)
+export const basicSprite = () => {
+  const [digit, setDigit] = useState(0)
   const [loop, setLoop] = useState(false)
   const { howl, state } = useHowl({
     src: [sound2web, sound2mp3],
@@ -278,6 +313,11 @@ export const simpleSprite = () => {
   })
   return (
     <>
+      <p>
+        All these digits are loaded from a single sound file and are controlled by one Howl.
+        The Play component will automatically start playing when the selected sprite changes.
+      </p>
+      <p>Selected digit: {digit}</p>
       <p>State: {state}</p>
       <div>
         {[1, 2, 3, 4, 5].map(digit => (
@@ -292,13 +332,16 @@ export const simpleSprite = () => {
         ))}
       </div>
       <button onClick={() => setLoop(!loop)}>{loop ? 'Disable Looping' : 'Enable Looping'}</button>
-      <Play howl={howl} sprite={`${digit}`} loop={loop} />
+      {digit > 0 ?
+        <Play howl={howl} sprite={`${digit}`} loop={loop} /> : null
+      }
     </>
   )
 }
 
+type Digits = { digit: number, time: number }[]
 export const complexSprite = () => {
-  const [digits, setDigits] = useState<{ digit: number; time: number }[]>([])
+  const [digits, setDigits] = useState<Digits>([])
   const [playBeat, setPlayBeat] = useState(false)
   const { howl, state } = useHowl({
     src: [sound2web, sound2mp3],
@@ -313,6 +356,15 @@ export const complexSprite = () => {
   })
   return (
     <>
+      <p>
+        All these sounds are loaded from a single sound file on one Howl.
+      </p>
+      <p>
+        Every time you click a digit, a Play is rendered and played until onEnd is called.
+      </p>
+      <p>
+        Go ahead, play a few sounds at once.
+      </p>
       <p>State: {state}</p>
       <div>
         {[1, 2, 3, 4, 5].map(digit => (
@@ -346,7 +398,7 @@ export const complexSprite = () => {
         <Play howl={howl} sprite="beat" loop pause={!playBeat}>
           {({ playing }) => <p>Beat Playing: {playing().toString()}</p>}
         </Play>
-        {digits.map(({ digit, time }, index) => (
+        {digits.map(({ digit, time }) => (
           <Play
             howl={howl}
             sprite={`${digit}`}
@@ -389,27 +441,32 @@ export const swapSource = () => {
   const { howl, state, error } = useHowl({ src: src, html5: useHtml5 })
   return (
     <>
+      <p>Every time a setting is changed on useHowl or Rehowl, the howl instance is reconstructed.</p>
+      <p>It's better to load multiple howls and use Play components than swap the source on a single howl.</p>
+      <p>In this example, you can change the howl's src and whether it's using HTML5 Audio or Web Audio.</p>
       <h3>Select a sound to play</h3>
       {srcs.map(srcChoice => (
         <div key={srcChoice}>
-          <input
-            type="radio"
-            name="source"
-            checked={srcChoice === src}
-            value={srcChoice}
-            onChange={event => {
-              if (event.target.checked) {
-                setSrc(srcChoice)
-              }
-            }}
-          />
-          &nbsp;{srcChoice}
+          <label>
+            <input
+              type="radio"
+              name="source"
+              checked={srcChoice === src}
+              value={srcChoice}
+              onChange={event => {
+                if (event.target.checked) {
+                  setSrc(srcChoice)
+                }
+              }}
+            />
+            &nbsp;{srcChoice}
+          </label>
         </div>
       ))}
-      <div>
+      <label style={{ display: 'block', marginTop: '1rem' }}>
         <input type="checkbox" checked={useHtml5} onChange={event => setUseHtml5(event.target.checked)} id="html5" />
-        <label htmlFor="html5">Use HTML 5 Audio</label>
-      </div>
+        Use HTML 5 Audio
+      </label>
 
       <h3>Info</h3>
       {error && <p>Error: {[error.id, error.message].filter(x => x).join(' ')} </p>}

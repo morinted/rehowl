@@ -1,15 +1,16 @@
-import useHowl, { UseHowlState } from './useHowl'
+import useHowl, { IUseHowlState, IUseHowlOptions } from './useHowl'
 
-type Props = {
-  src: string | string[]
-  sprite?: IHowlSoundSpriteDefinition
-  format?: string[]
-  html5?: boolean
-  preload?: boolean
-  xhrWithCredentials?: boolean
-  children?: (props: UseHowlState) => JSX.Element
+interface Props extends IUseHowlOptions {
+  /** Child component that receives render props. */
+  children: (props: IUseHowlState) => JSX.Element
 }
 
+/**
+ * Render prop access to a Howl instance for use with `<Play />`.
+ *
+ * Recommended when using Rehowl from a class component. If you're
+ * using a function component, it's best to use `useHowl`.
+ */
 export default function Rehowl(props: Props) {
   const { children, src, sprite, format, html5, preload, xhrWithCredentials } = props
 

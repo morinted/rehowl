@@ -1,39 +1,133 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 
-type SoundInfo = {
+interface SoundInfo {
   playing: () => boolean
   duration: () => number
   seek: () => number
   volume: () => number
 }
 
-type Props = {
+interface Props {
+  /** Instance of Howl to play sounds from. */
   howl: null | Howl
+  /** If specified, play a sprite instead of the entire source. */
   sprite?: string
   children?: (props: SoundInfo) => JSX.Element
+  /**
+   * Pause playback.
+   *
+   * @default false
+   */
   pause?: boolean
+  /**
+   * Control playback volume, from 0 to 1.
+   *
+   * @default 1
+   */
   volume?: number
+  /**
+   * Mute playback.
+   *
+   * @default false
+   */
   mute?: boolean
+  /**
+   * While true, playback will be stopped.
+   *
+   * Stopping sets seek to 0 and allows Howl to
+   *
+   * Consider setting pause to true and seek to 0 instead.
+   *
+   * @default false
+   */
   stop?: boolean
+  /**
+   * The time to seek this sound to in seconds.
+   *
+   * The seek only applies once per value change.
+   **/
   seek?: number
-  rate?: number // 0.5 to 4.0
+  /**
+   * Set the rate of playback, from 0.5 to 4.
+   *
+   * @default 1
+   */
+  rate?: number
+  /**
+   * Whether to loop the track or sprite on play end.
+   *
+   * @default false
+   */
   loop?: boolean
+  /**
+   * Fade a currently playing sound between two volumes.
+   *
+   * Values are [from, to, duration].
+   */
   fade?: [number, number, number]
+  /**
+   * Listen for play events.
+   *
+   * Fires once when <Play /> is mounted even if the sound starts in a stopped or paused state.
+   */
   onPlay?: () => void
+  /**
+   * Fires when play fails and provides the error message or code.
+   */
   onPlayError?: (message: string) => void
+  /**
+   * Fires when play ends, meaning the sound reached its end, including every time a loop has finished.
+   */
   onEnd?: () => void
+  /**
+   * Fires when this sound is paused, including on <Play /> mount if `pause` or `stop` is true.
+   */
   onPause?: () => void
+  /**
+   * Fires when the sound is stopped.
+   */
   onStop?: () => void
+  /**
+   * Fires when the sound is muted or unmuted.
+   */
   onMute?: () => void
+  /**
+   * Fires when the sound's volume is set, including on <Play /> mount if `volume` is set.
+   */
   onVolume?: () => void
+  /**
+   * Fires when the sound is seeked.
+   */
   onSeek?: () => void
+  /**
+   * Fires when this sound's fade is complete.
+   */
   onFade?: () => void
+  /**
+   * Fires when the rate of playback for this sound is changed.
+   */
   onRate?: () => void
 }
 
+/**
+ * Plays and controls sounds from a Howl.
+ *
+ * The Howl instance, provided by the `howl` prop, can come from `useHowl`,
+ * `<Rehowl />`, or provided from your own use of howler.js
+ *
+ * You can render **multiple `<Play />` components** for a single
+ * Howl instance in order to play multiple sounds or sprites at once.
+ *
+ * Event handlers fire only for the `<Play />` that they correspond to,
+ * and not for every sound playing off of the Howl instance like in howler.js
+ */
 export default function Play(props: Props) {
   const { howl, pause, sprite, mute, volume, seek, fade, stop, rate, loop, children } = props
 
+  const shouldPlay = !pause && !stop
+
+  // Don't attempt to play the Howl until both pause and stop are false.
+  const [initialized, setInitialized] = useState(shouldPlay)
   const [playId, setPlayId] = useState<null | number>(null)
   const [playing, setPlaying] = useState(true)
   const [stopped, setStopped] = useState(false)
@@ -83,24 +177,30 @@ export default function Play(props: Props) {
     onRate.current = props.onRate || null
   }, [props.onRate])
 
+  // Only load the rest of the component once the user wants to play.
   useEffect(() => {
-    if (!howl) return
+    if (initialized) return
+    if (!shouldPlay) return
+    setInitialized(true)
+  }, [initialized, shouldPlay])
+
+  useEffect(() => {
+    if (!howl || !shouldPlay || !initialized) return
     let currentPlayId: undefined | number
 
     // Play the sound and get its ID.
-    const startPlaying = !pause && !stop
-
     currentPlayId = howl.play(sprite)
     setPlayId(currentPlayId)
 
-    // Initialize with the right volume.
-    if (volume) {
+    // Initialize with the right settings.
+    if (volume !== undefined) {
       howl.volume(volume, currentPlayId)
     }
-
-    if (!startPlaying) {
-      howl.pause(currentPlayId)
-      setPlaying(false)
+    if (mute !== undefined) {
+      howl.mute(mute, currentPlayId)
+    }
+    if (rate !== undefined) {
+      howl.rate(rate, currentPlayId)
     }
 
     howl.once('play', id => {
@@ -175,7 +275,8 @@ export default function Play(props: Props) {
 
     return () => {
       howl.stop(currentPlayId)
-
+      setInitialized(false)
+      setUnlocked(false)
       howl.off('play', undefined, currentPlayId)
       howl.off('playerror', undefined, currentPlayId)
       howl.off('pause', undefined, currentPlayId)
@@ -188,7 +289,7 @@ export default function Play(props: Props) {
       howl.off('fade', undefined, currentPlayId)
       setPlayId(null)
     }
-  }, [howl, sprite])
+  }, [initialized, howl, sprite])
 
   useEffect(() => {
     /**
@@ -260,7 +361,7 @@ export default function Play(props: Props) {
     return howl.duration()
   }, [howl, playId])
   const getPlaying = useCallback(() => {
-    if (!howl || !playId) return playing
+    if (!howl || !playId) return false
     return howl.playing(playId)
   }, [howl, playId])
   const getSeek = useCallback(() => {
@@ -274,15 +375,16 @@ export default function Play(props: Props) {
     return position
   }, [howl, playId, seek, seeking])
   const getVolume = useCallback(() => {
-    if (!howl || !playId) return 0
-    const volume = howl.volume(playId)
-    if (typeof volume !== 'number') {
+    const propsVolume = volume === undefined ? 1 : volume
+    if (!howl || !playId) return propsVolume
+    const currentVolume = howl.volume(playId)
+    if (typeof currentVolume !== 'number') {
       return 0
     }
-    return volume
-  }, [howl, playId])
+    return currentVolume
+  }, [howl, playId, volume])
 
-  if (!children || !playId || !howl) return null
+  if (!children || !howl) return null
   return children({
     duration,
     playing: getPlaying,

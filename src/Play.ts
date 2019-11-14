@@ -375,13 +375,14 @@ export default function Play(props: Props) {
     return position
   }, [howl, playId, seek, seeking])
   const getVolume = useCallback(() => {
-    if (!howl || !playId) return 0
-    const volume = howl.volume(playId)
-    if (typeof volume !== 'number') {
+    const propsVolume = volume === undefined ? 1 : volume
+    if (!howl || !playId) return propsVolume
+    const currentVolume = howl.volume(playId)
+    if (typeof currentVolume !== 'number') {
       return 0
     }
-    return volume
-  }, [howl, playId])
+    return currentVolume
+  }, [howl, playId, volume])
 
   if (!children || !howl) return null
   return children({

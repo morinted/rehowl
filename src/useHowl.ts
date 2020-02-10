@@ -57,6 +57,14 @@ export interface IUseHowlOptions {
    * Whether or not to enable the withCredentials flag on XHR requests used to fetch audio files when using Web Audio API.
    */
   xhrWithCredentials?: boolean
+  /**
+   * Default starting volume for Plays. Defaults to muted to prevent clipping of low-volume plays.
+   *
+   * Set it to your desired Play volume if you find the beginning of your plays getting clipped.
+   *
+   * @default 0
+   */
+  defaultVolume?: number
 }
 
 /**
@@ -66,7 +74,7 @@ export interface IUseHowlOptions {
  * using a class component, you'll need to use `<Rehowl />`.
  */
 export default function useHowl(howlOptions: IUseHowlOptions): IUseHowlState {
-  const { src, sprite, format, html5, preload, xhrWithCredentials } = howlOptions
+  const { src, sprite, format, html5, preload, xhrWithCredentials, defaultVolume = 0 } = howlOptions
   const [howl, setHowl] = useState<Howl | null>(null)
   // Force rerender on load state changes.
   const [, setState] = useState('unloaded')
@@ -77,18 +85,19 @@ export default function useHowl(howlOptions: IUseHowlOptions): IUseHowlState {
 
   useEffect(() => {
     const newHowl = new Howler.Howl({
-      src,
-      sprite,
+      autoplay: false,
       format,
       html5,
-      xhrWithCredentials,
-      preload,
-      autoplay: false,
+      onload: () => setState('loaded'),
+      onloaderror: (id, message) => setError({ id, message }),
       onunlock: () => {
         setLocked(false)
       },
-      onload: () => setState('loaded'),
-      onloaderror: (id, message) => setError({ id, message }),
+      preload,
+      sprite,
+      src,
+      volume: defaultVolume,
+      xhrWithCredentials,
     })
     setHowl(newHowl)
 
@@ -102,15 +111,16 @@ export default function useHowl(howlOptions: IUseHowlOptions): IUseHowlState {
       newHowl.stop()
       newHowl.unload()
     }
-  }, [JSON.stringify(src), JSON.stringify(sprite), JSON.stringify(format), html5, xhrWithCredentials, preload])
+  }, [JSON.stringify(src), JSON.stringify(sprite), JSON.stringify(format), html5, xhrWithCredentials, preload, defaultVolume])
 
-  if (!howl)
+  if (!howl) {
     return {
       howl: null,
       error: null,
       state: 'unloaded',
-      load: () => { },
+      load: () => {},
     }
+  }
   const state = howl.state()
   return {
     howl: howl,

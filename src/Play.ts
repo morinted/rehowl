@@ -122,7 +122,7 @@ interface Props {
  * and not for every sound playing off of the Howl instance like in howler.js
  */
 export default function Play(props: Props) {
-  const { howl, pause, sprite, mute, volume, seek, fade, stop, rate, loop, children } = props
+  const { howl, pause, sprite, mute, volume = 1, seek, fade, stop, rate, loop, children } = props
 
   const shouldPlay = !pause && !stop
 
@@ -192,9 +192,7 @@ export default function Play(props: Props) {
     setPlayId(currentPlayId)
 
     // Initialize with the right settings.
-    if (volume !== undefined) {
-      howl.volume(volume, currentPlayId)
-    }
+    howl.volume(volume, currentPlayId)
     if (mute !== undefined) {
       howl.mute(mute, currentPlayId)
     }

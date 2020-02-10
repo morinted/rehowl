@@ -434,6 +434,83 @@ export const errorBadSRC = () => {
   )
 }
 
+export const howlDefaultVolume = () => {
+  const [defaultVolume, setDefaultVolume] = useState(0)
+  const [playVolume, setPlayVolume] = useState(0)
+  const { howl } = useHowl({ src: sound1, defaultVolume })
+  const [play, setPlay] = useState(false)
+  return (
+    <>
+      <p>Default volume on the howl is 0 to prevent clipping on quiet plays. This example is used for debug on slower devices such as phones.</p>
+      <div>
+        <label>
+          <input
+            type="radio"
+            name="default-volume"
+            checked={defaultVolume === 0}
+            value={0}
+            onChange={event => {
+              if (event.target.checked) {
+                setDefaultVolume(0)
+              }
+            }}
+          />
+          &nbsp;Default volume 0
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="default-volume"
+            checked={defaultVolume === 1}
+            value={1}
+            onChange={event => {
+              if (event.target.checked) {
+                setDefaultVolume(1)
+              }
+            }}
+          />
+          &nbsp;Default volume 1
+        </label>
+      </div>
+      <div>
+        <label>
+          <input
+            type="radio"
+            name="play-volume"
+            checked={playVolume === 0}
+            value={0}
+            onChange={event => {
+              if (event.target.checked) {
+                setPlayVolume(0)
+              }
+            }}
+          />
+          &nbsp;Play volume 0
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="play-volume"
+            checked={playVolume === 1}
+            value={1}
+            onChange={event => {
+              if (event.target.checked) {
+                setPlayVolume(1)
+              }
+            }}
+          />
+          &nbsp;Play volume 1
+        </label>
+      </div>
+      <PlayPauseButton play={play} setPlay={setPlay} />
+
+      {play &&
+        <Play howl={howl} volume={playVolume} seek={0.5} />
+      }
+    </>
+  )
+}
+
 export const swapSource = () => {
   const srcs = ['nonexistent.mp3', sound1, sound2mp3]
   const [useHtml5, setUseHtml5] = useState(false)

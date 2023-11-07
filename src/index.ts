@@ -1,3 +1,3 @@
-export { default as Rehowl } from './Rehowl'
-export { default as useHowl } from './useHowl'
-export { default as Play } from './Play'
+export { Rehowl } from './Rehowl'
+export { useHowl } from './useHowl'
+export { Play } from './Play'

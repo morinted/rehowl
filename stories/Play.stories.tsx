@@ -1,7 +1,7 @@
 import * as React from 'react'
 const { useState, useEffect, useRef } = React
-import useHowl from '../src/useHowl'
-import Play from '../src/Play'
+import { useHowl } from '../src/useHowl'
+import { Play } from '../src/Play'
 import { action } from '@storybook/addon-actions'
 import type { Meta, StoryFn } from '@storybook/react'
 

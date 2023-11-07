@@ -16,9 +16,6 @@ const config: StorybookConfig = {
     },
     '@storybook/addon-essentials',
   ],
-  typescript: {
-    reactDocgen: 'react-docgen',
-  },
 
   framework: {
     name: '@storybook/react-webpack5',

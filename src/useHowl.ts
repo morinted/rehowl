@@ -74,7 +74,7 @@ export interface IUseHowlOptions {
  * Recommended when using Rehowl from a function component. If you're
  * using a class component, you'll need to use `<Rehowl />`.
  */
-export default function useHowl(howlOptions: IUseHowlOptions): IUseHowlState {
+export function useHowl(howlOptions: IUseHowlOptions): IUseHowlState {
   const { src, sprite, format, html5, preload, xhr, defaultVolume = 0 } = howlOptions
   const [howl, setHowl] = useState<Howl | null>(null)
   // Force rerender on load state changes.

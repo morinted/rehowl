@@ -121,7 +121,7 @@ interface Props {
  * Event handlers fire only for the `<Play />` that they correspond to,
  * and not for every sound playing off of the Howl instance like in howler.js
  */
-export default function Play(props: Props) {
+export function Play(props: Props) {
   const { howl, pause, sprite, mute, volume = 1, seek, fade, stop, rate, loop, children } = props
 
   const shouldPlay = !pause && !stop
@@ -201,68 +201,68 @@ export default function Play(props: Props) {
     }
 
     // Update children on initial play.
-    howl.once('play', id => {
+    howl.once('play', (id) => {
       if (id !== currentPlayId) return
       setUnlocked(true)
     })
 
     // Set up event listeners, filtered to this play ID.
-    howl.on('play', id => {
+    howl.on('play', (id) => {
       if (id !== currentPlayId) return
       if (onPlay.current) {
         onPlay.current()
       }
     })
-    howl.on('playerror', id => {
+    howl.on('playerror', (id) => {
       if (id !== currentPlayId) return
       if (onPlayError.current) {
         onPlayError.current()
       }
     })
-    howl.on('pause', id => {
+    howl.on('pause', (id) => {
       if (id !== currentPlayId) return
       if (onPause.current) {
         onPause.current()
       }
     })
-    howl.on('end', id => {
+    howl.on('end', (id) => {
       if (id !== currentPlayId) return
       if (onEnd.current) {
         onEnd.current()
       }
     })
-    howl.on('stop', id => {
+    howl.on('stop', (id) => {
       if (id !== currentPlayId) return
       if (onStop.current) {
         onStop.current()
       }
     })
-    howl.on('mute', id => {
+    howl.on('mute', (id) => {
       if (id !== currentPlayId) return
       if (onMute.current) {
         onMute.current()
       }
     })
-    howl.on('volume', id => {
+    howl.on('volume', (id) => {
       if (id !== currentPlayId) return
       if (onVolume.current) {
         onVolume.current()
       }
     })
-    howl.on('rate', id => {
+    howl.on('rate', (id) => {
       if (id !== currentPlayId) return
       if (onRate.current) {
         onRate.current()
       }
     })
-    howl.on('seek', id => {
+    howl.on('seek', (id) => {
       if (id !== currentPlayId) return
       setSeeking(false)
       if (onSeek.current) {
         onSeek.current()
       }
     })
-    howl.on('fade', id => {
+    howl.on('fade', (id) => {
       if (id !== currentPlayId) return
       if (onFade.current) {
         onFade.current()

@@ -12,7 +12,7 @@ interface Props extends IUseHowlOptions {
  * using a function component, it's best to use `useHowl`.
  */
 export default function Rehowl(props: Props) {
-  const { children, src, sprite, format, html5, preload, xhrWithCredentials } = props
+  const { children, src, sprite, format, html5, preload, xhr } = props
 
   const { howl, error, state, load } = useHowl({
     src,
@@ -20,7 +20,7 @@ export default function Rehowl(props: Props) {
     format,
     html5,
     preload,
-    xhrWithCredentials,
+    xhr,
   })
 
   if (!children || !howl) return null

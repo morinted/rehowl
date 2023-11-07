@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import Howler from 'howler'
+import Howler, { HowlOptions, SoundSpriteDefinitions } from 'howler'
 
 export interface IUseHowlState {
   /** The Howl instance. */
@@ -31,7 +31,7 @@ export interface IUseHowlOptions {
    * A third (optional) parameter is available to set a sprite as looping, but you can just
    * set `loop` to `true` on the `<Play />` component to achieve this as well.
    */
-  sprite?: IHowlSoundSpriteDefinition
+  sprite?: SoundSpriteDefinitions
   /**
    * Array of formats corresponding to the sources provided if it's not inferable from the file name.
    */
@@ -56,7 +56,7 @@ export interface IUseHowlOptions {
   /**
    * Whether or not to enable the withCredentials flag on XHR requests used to fetch audio files when using Web Audio API.
    */
-  xhrWithCredentials?: boolean
+  xhr?: HowlOptions['xhr']
   /**
    * Default starting volume for Plays. Defaults to muted to prevent clipping of low-volume plays.
    *
@@ -74,7 +74,7 @@ export interface IUseHowlOptions {
  * using a class component, you'll need to use `<Rehowl />`.
  */
 export default function useHowl(howlOptions: IUseHowlOptions): IUseHowlState {
-  const { src, sprite, format, html5, preload, xhrWithCredentials, defaultVolume = 0 } = howlOptions
+  const { src, sprite, format, html5, preload, xhr, defaultVolume = 0 } = howlOptions
   const [howl, setHowl] = useState<Howl | null>(null)
   // Force rerender on load state changes.
   const [, setState] = useState('unloaded')
@@ -97,7 +97,7 @@ export default function useHowl(howlOptions: IUseHowlOptions): IUseHowlState {
       sprite,
       src,
       volume: defaultVolume,
-      xhrWithCredentials,
+      xhr,
     })
     setHowl(newHowl)
 
@@ -111,7 +111,7 @@ export default function useHowl(howlOptions: IUseHowlOptions): IUseHowlState {
       newHowl.stop()
       newHowl.unload()
     }
-  }, [JSON.stringify(src), JSON.stringify(sprite), JSON.stringify(format), html5, xhrWithCredentials, preload, defaultVolume])
+  }, [JSON.stringify(src), JSON.stringify(sprite), JSON.stringify(format), html5, xhr, preload, defaultVolume])
 
   if (!howl) {
     return {
@@ -129,9 +129,9 @@ export default function useHowl(howlOptions: IUseHowlOptions): IUseHowlState {
     load:
       state === 'unloaded'
         ? () => {
-          howl && howl.load()
-          setState('loading')
-        }
-        : () => { },
+            howl && howl.load()
+            setState('loading')
+          }
+        : () => {},
   }
 }

@@ -1,7 +1,7 @@
 import { Meta, Story } from '@storybook/addon-docs/blocks'
 import GitHubButton from './GitHubButton'
 
-<Meta title="Rehowl|Getting Started" />
+<Meta title="Rehowl/Getting Started" />
 
 # Rehowl
 
@@ -32,8 +32,8 @@ yarn add -D howler rehowl
 ## Quickstart
 
 1. Get a Howl
-    - In a function component: [`useHowl`](./?path=/docs/hooks-usehowl--page)
-    - In a class component: [`<Rehowl />`](./?path=/docs/components-rehowl--play-pause)
+   - In a function component: [`useHowl`](./?path=/docs/hooks-usehowl--page)
+   - In a class component: [`<Rehowl />`](./?path=/docs/components-rehowl--play-pause)
 2. Play sounds off the Howl with [`<Play />`](./?path=/docs/components-play--render-play)
 
 ## Autoplay Examples
@@ -52,12 +52,11 @@ import { useHowl, Play } from 'rehowl'
 
 const MyComponent = () => {
   const { howl } = useHowl({
-    src: ['sound1.mp3', 'sound1.wav']
+    src: ['sound1.mp3', 'sound1.wav'],
   })
   return <Play howl={howl} />
 }
 ```
-
 
 ### Render props interface
 
@@ -69,11 +68,7 @@ import { Rehowl, Play } from 'rehowl'
 
 class MyComponent extends Component {
   render() {
-    return (
-      <Rehowl src={[ 'sound1.mp3', 'sound1.wav' ]}>{
-        ({ howl }) => <Play howl={howl} />
-      }</Rehowl>
-    )
+    return <Rehowl src={['sound1.mp3', 'sound1.wav']}>{({ howl }) => <Play howl={howl} />}</Rehowl>
   }
 }
 ```

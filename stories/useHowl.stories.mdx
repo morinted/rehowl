@@ -1,10 +1,9 @@
-import { Meta, Props, Description, Story, Preview } from '@storybook/addon-docs/blocks'
+import { Meta, ArgsTable, Description, Story, Preview } from '@storybook/addon-docs/blocks'
 import { useState } from 'react'
 import { useHowl } from '../src'
 import sound1 from './static/audio/sound1.mp3'
 
-
-<Meta title="Hooks|useHowl" component={useHowl} />
+<Meta title="Hooks/useHowl" component={useHowl} />
 
 # useHowl
 
@@ -12,13 +11,8 @@ import sound1 from './static/audio/sound1.mp3'
 
 ```js
 function MyComponent() {
-  const {
-    howl,
-    state,
-    error,
-    load
-  } = useHowl({
-    src: './mysound.mp3'
+  const { howl, state, error, load } = useHowl({
+    src: './mysound.mp3',
   })
   // howl can be handed to <Play />
 }
@@ -26,11 +20,11 @@ function MyComponent() {
 
 Values provided by useHowl are:
 
-| Variable | Description |
-|------|------|
-| howl | Howl instance |
-| state | 'unloaded', 'loading', or 'loaded' |
-| error | { message, id } of load error, if any. |
-| load | Call this function to load source if you set `preload` to false. |
+| Variable | Description                                                      |
+| -------- | ---------------------------------------------------------------- |
+| howl     | Howl instance                                                    |
+| state    | 'unloaded', 'loading', or 'loaded'                               |
+| error    | \{ message, id \} of load error, if any.                         |
+| load     | Call this function to load source if you set `preload` to false. |
 
-<Props of={useHowl} />
+<ArgsTable of={useHowl} />

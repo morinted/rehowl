@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react'
+import * as React from 'react'
+const { useState, useEffect, useRef } = React
 import { useHowl, Play } from '../src'
 import { action } from '@storybook/addon-actions'
+import { Meta, StoryFn } from '@storybook/react'
 
 // @ts-ignore
 import sound1 from './static/audio/sound1.mp3'
@@ -9,19 +11,22 @@ import sound2mp3 from './static/audio/sound2.mp3'
 // @ts-ignore
 import sound2web from './static/audio/sound2.webm'
 
-export default {
-  title: 'Components|<Play />',
+const meta: Meta<typeof Play> = {
+  title: 'Components/Play',
   component: Play,
+  tags: ['autodocs'],
 }
+export default meta
 
-const PlayPauseButton = ({ play, setPlay }) =>
+type Story = StoryFn<typeof Play>
+
+const PlayPauseButton = ({ play, setPlay }) => (
   <p>
-    <button onClick={() => setPlay(!play)}>
-      {play ? 'Pause ⏸' : 'Play ▶'}
-    </button>
+    <button onClick={() => setPlay(!play)}>{play ? 'Pause ⏸' : 'Play ▶'}</button>
   </p>
+)
 
-export const renderPlay = () => {
+export const renderPlay: Story = () => {
   const { howl, state } = useHowl({ src: sound1 })
   const [play, setPlay] = useState(false)
   return (
@@ -29,16 +34,16 @@ export const renderPlay = () => {
       <p>Sound stops when the Play component is unmounted.</p>
       <p>State: {state}</p>
       <PlayPauseButton play={play} setPlay={setPlay} />
-      {play ?
+      {play ? (
         <Play howl={howl}>
           {({ playing }) => <>This is the child of the play component! Playing: {playing().toString()}</>}
-        </Play> : null
-      }
+        </Play>
+      ) : null}
     </>
   )
 }
 
-export const noPreload = () => {
+export const noPreload: Story = () => {
   const { howl, state, load, error } = useHowl({ src: sound1, preload: false })
   const [play, setPlay] = useState(false)
   useEffect(() => {
@@ -50,21 +55,23 @@ export const noPreload = () => {
       <p>State: {state}</p>
       {state === 'unloaded' && <button onClick={() => load()}>Load</button>}
       <PlayPauseButton play={play} setPlay={setPlay} />
-      {play &&
+      {play && (
         <Play howl={howl} onPlayError={action('onPlayError')}>
           {({ playing }) => <>Playing: {playing().toString()}</>}
         </Play>
-      }
+      )}
     </>
   )
 }
 
-export const stop = () => {
+export const stop: Story = () => {
   const { howl, state } = useHowl({ src: sound1 })
   const [play, setPlay] = useState(false)
   return (
     <>
-      <p>This component is being stopped with the <code>stop</code> prop.</p>
+      <p>
+        This component is being stopped with the <code>stop</code> prop.
+      </p>
       <p>State: {state}</p>
       <PlayPauseButton play={play} setPlay={setPlay} />
       <Play howl={howl} stop={!play} onStop={action('onStop')} onPlay={action('onPlay')}>
@@ -74,7 +81,7 @@ export const stop = () => {
   )
 }
 
-export const rate = () => {
+export const rate: Story = () => {
   const { howl, state } = useHowl({ src: sound1 })
   const [play, setPlay] = useState(false)
   const [rate, setRate] = useState(2)
@@ -101,12 +108,14 @@ export const rate = () => {
   )
 }
 
-export const pause = () => {
+export const pause: Story = () => {
   const { howl, state } = useHowl({ src: sound1 })
   const [play, setPlay] = useState(false)
   return (
     <>
-      <p>Control playback with the <code>pause</code> prop.</p>
+      <p>
+        Control playback with the <code>pause</code> prop.
+      </p>
       <p>State: {state}</p>
       <PlayPauseButton play={play} setPlay={setPlay} />
       <Play howl={howl} pause={!play} onPlay={action('onPlay')} onPause={action('onPause')}>
@@ -116,7 +125,7 @@ export const pause = () => {
   )
 }
 
-export const volume = () => {
+export const volume: Story = () => {
   const { howl, state } = useHowl({ src: sound1 })
   const [play, setPlay] = useState(false)
   const [volume, setVolume] = useState(0.5)
@@ -146,7 +155,7 @@ export const volume = () => {
   )
 }
 
-export const mute = () => {
+export const mute: Story = () => {
   const { howl, state } = useHowl({ src: sound1 })
   const [play, setPlay] = useState(false)
   const [mute, setMute] = useState(true)
@@ -157,16 +166,16 @@ export const mute = () => {
       <p>
         {mute ? 'Muted.' : 'Unmuted.'} <button onClick={() => setMute(!mute)}>{mute ? 'Unmute 🔊' : 'Mute 🔇'}</button>
       </p>
-      {play &&
+      {play && (
         <Play howl={howl} mute={mute} onPlay={action('onPlay')} onMute={action('onMute')}>
           {({ playing }) => <>Playing: {playing().toString()}</>}
         </Play>
-      }
+      )}
     </>
   )
 }
 
-export const fade = () => {
+export const fade: Story = () => {
   const { howl, state } = useHowl({ src: sound1 })
   const [play, setPlay] = useState(false)
   const [silent, setSilent] = useState<undefined | boolean>(undefined)
@@ -222,7 +231,7 @@ export const fade = () => {
   )
 }
 
-export const seekWithScrubberBar = () => {
+export const seekWithScrubberBar: Story = () => {
   const { howl } = useHowl({ src: sound1 })
   const [targetSeek, setTargetSeek] = useState(0)
   const [play, setPlay] = useState(false)
@@ -298,7 +307,7 @@ export const seekWithScrubberBar = () => {
   )
 }
 
-export const basicSprite = () => {
+export const basicSprite: Story = () => {
   const [digit, setDigit] = useState(0)
   const [loop, setLoop] = useState(false)
   const { howl, state } = useHowl({
@@ -314,8 +323,8 @@ export const basicSprite = () => {
   return (
     <>
       <p>
-        All these digits are loaded from a single sound file and are controlled by one Howl.
-        The Play component will automatically start playing when the selected sprite changes.
+        All these digits are loaded from a single sound file and are controlled by one Howl. The Play component will
+        automatically start playing when the selected sprite changes.
       </p>
       <p>Selected digit: {digit}</p>
       <p>State: {state}</p>
@@ -332,15 +341,13 @@ export const basicSprite = () => {
         ))}
       </div>
       <button onClick={() => setLoop(!loop)}>{loop ? 'Disable Looping' : 'Enable Looping'}</button>
-      {digit > 0 ?
-        <Play howl={howl} sprite={`${digit}`} loop={loop} /> : null
-      }
+      {digit > 0 ? <Play howl={howl} sprite={`${digit}`} loop={loop} /> : null}
     </>
   )
 }
 
-type Digits = { digit: number, time: number }[]
-export const complexSprite = () => {
+type Digits = { digit: number; time: number }[]
+export const complexSprite: Story = () => {
   const [digits, setDigits] = useState<Digits>([])
   const [playBeat, setPlayBeat] = useState(false)
   const { howl, state } = useHowl({
@@ -356,15 +363,9 @@ export const complexSprite = () => {
   })
   return (
     <>
-      <p>
-        All these sounds are loaded from a single sound file on one Howl.
-      </p>
-      <p>
-        Every time you click a digit, a Play is rendered and played until onEnd is called.
-      </p>
-      <p>
-        Go ahead, play a few sounds at once.
-      </p>
+      <p>All these sounds are loaded from a single sound file on one Howl.</p>
+      <p>Every time you click a digit, a Play is rendered and played until onEnd is called.</p>
+      <p>Go ahead, play a few sounds at once.</p>
       <p>State: {state}</p>
       <div>
         {[1, 2, 3, 4, 5].map(digit => (
@@ -423,7 +424,7 @@ export const complexSprite = () => {
   )
 }
 
-export const errorBadSRC = () => {
+export const errorBadSRC: Story = () => {
   const { howl, state, error } = useHowl({ src: 'fake' })
   return (
     <>
@@ -434,14 +435,17 @@ export const errorBadSRC = () => {
   )
 }
 
-export const howlDefaultVolume = () => {
+export const howlDefaultVolume: Story = () => {
   const [defaultVolume, setDefaultVolume] = useState(0)
   const [playVolume, setPlayVolume] = useState(0)
   const { howl } = useHowl({ src: sound1, defaultVolume })
   const [play, setPlay] = useState(false)
   return (
     <>
-      <p>Default volume on the howl is 0 to prevent clipping on quiet plays. This example is used for debug on slower devices such as phones.</p>
+      <p>
+        Default volume on the howl is 0 to prevent clipping on quiet plays. This example is used for debug on slower
+        devices such as phones.
+      </p>
       <div>
         <label>
           <input
@@ -504,14 +508,12 @@ export const howlDefaultVolume = () => {
       </div>
       <PlayPauseButton play={play} setPlay={setPlay} />
 
-      {play &&
-        <Play howl={howl} volume={playVolume} seek={0.5} />
-      }
+      {play && <Play howl={howl} volume={playVolume} seek={0.5} />}
     </>
   )
 }
 
-export const swapSource = () => {
+export const swapSource: Story = () => {
   const srcs = ['nonexistent.mp3', sound1, sound2mp3]
   const [useHtml5, setUseHtml5] = useState(false)
   const [src, setSrc] = useState(srcs[0])

@@ -1,23 +1,16 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "es6",
-      "dom"
-    ],
-    "module": "commonjs",
+    "lib": ["es6", "dom"],
+    "module": "esnext",
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "declaration": true,
     "outDir": "./lib",
     "strict": true,
     "jsx": "react",
     "moduleResolution": "node"
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "stories",
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules", "stories"]
 }

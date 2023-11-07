@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import Howler, { HowlOptions, SoundSpriteDefinitions } from 'howler'
+import { Howl } from 'howler'
+import type { HowlOptions, SoundSpriteDefinitions } from 'howler'
 
 export interface IUseHowlState {
   /** The Howl instance. */
@@ -84,7 +85,7 @@ export default function useHowl(howlOptions: IUseHowlOptions): IUseHowlState {
   const [error, setError] = useState<null | { id?: number; message: any }>(null)
 
   useEffect(() => {
-    const newHowl = new Howler.Howl({
+    const newHowl = new Howl({
       autoplay: false,
       format,
       html5,

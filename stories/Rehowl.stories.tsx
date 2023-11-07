@@ -1,15 +1,16 @@
 import * as React from 'react'
 const { useState } = React
-import { Rehowl, Play } from '../src'
+import Rehowl from '../src/Rehowl'
+import Play from '../src/Play'
 // @ts-ignore
 import sound1 from './static/audio/sound1.mp3'
-import { Meta, StoryFn } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react'
 
-const meta: Meta<typeof Rehowl> = {
+const meta = {
   title: 'Components/Rehowl',
   component: Rehowl,
   tags: ['autodocs'],
-}
+} satisfies Meta<typeof Rehowl>
 
 export default meta
 type Story = StoryFn<typeof Rehowl>

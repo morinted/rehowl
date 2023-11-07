@@ -1,6 +1,6 @@
-import { Meta, ArgsTable, Description, Story, Preview } from '@storybook/addon-docs/blocks'
+import { Meta, ArgTypes, Description, Story, Preview } from '@storybook/blocks'
 import { useState } from 'react'
-import { useHowl } from '../src'
+import useHowl from '../src/useHowl'
 import sound1 from './static/audio/sound1.mp3'
 
 <Meta title="Hooks/useHowl" component={useHowl} />
@@ -27,4 +27,4 @@ Values provided by useHowl are:
 | error    | \{ message, id \} of load error, if any.                         |
 | load     | Call this function to load source if you set `preload` to false. |
 
-<ArgsTable of={useHowl} />
+<ArgTypes of={useHowl} />

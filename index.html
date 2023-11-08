@@ -1,20 +1,123 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Storybook</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>html, body {
-    overflow: hidden;
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-  }</style><script>/* globals window */
-  /* eslint-disable no-underscore-dangle */
-  try {
-    if (window.parent !== window) {
-      window.__REACT_DEVTOOLS_GLOBAL_HOOK__ = window.parent.__REACT_DEVTOOLS_GLOBAL_HOOK__;
-      window.__VUE_DEVTOOLS_GLOBAL_HOOK__ = window.parent.__VUE_DEVTOOLS_GLOBAL_HOOK__;
-    }
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.warn('unable to connect to parent frame for connecting dev tools');
-  }</script><style>#root[hidden],
-      #docs-root[hidden] {
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <title>@storybook/cli - Storybook</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    
+    <link
+      rel="prefetch"
+      href="./sb-common-assets/nunito-sans-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="prefetch"
+      href="./sb-common-assets/nunito-sans-bold.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="./sb-common-assets/fonts.css" />
+
+    <link href="./sb-manager/runtime.js" rel="modulepreload" />
+
+    
+    <link href="./sb-addons/essentials-controls-0/manager-bundle.js" rel="modulepreload" />
+    
+    <link href="./sb-addons/essentials-actions-1/manager-bundle.js" rel="modulepreload" />
+    
+    <link href="./sb-addons/essentials-backgrounds-2/manager-bundle.js" rel="modulepreload" />
+    
+    <link href="./sb-addons/essentials-viewport-3/manager-bundle.js" rel="modulepreload" />
+    
+    <link href="./sb-addons/essentials-toolbars-4/manager-bundle.js" rel="modulepreload" />
+    
+    <link href="./sb-addons/essentials-measure-5/manager-bundle.js" rel="modulepreload" />
+    
+    <link href="./sb-addons/essentials-outline-6/manager-bundle.js" rel="modulepreload" />
+    
+    <link href="./sb-addons/storybook-7/manager-bundle.js" rel="modulepreload" />
+       
+
+    <style>
+      #storybook-root[hidden] {
         display: none !important;
-      }</style></head><body><div id="root"></div><div id="docs-root"></div><script>window['DOCS_MODE'] = true;</script><script src="runtime~main.25fc818af1dd5d1e4dbb.bundle.js"></script><script src="vendors~main.48df51f555a9df3a7580.bundle.js"></script><script src="main.ded1ca9fb5918daa90ce.bundle.js"></script></body></html>
+      }
+    </style>
+
+    
+  </head>
+  <body>
+    <div id="root"></div>
+
+    
+    <script>
+      
+        
+          window['FEATURES'] = {
+  "warnOnLegacyHierarchySeparator": true,
+  "buildStoriesJson": false,
+  "storyStoreV7": true,
+  "argTypeTargetsV7": true,
+  "legacyDecoratorFileOrder": false
+};
+        
+      
+        
+          window['REFS'] = {};
+        
+      
+        
+          window['LOGLEVEL'] = "info";
+        
+      
+        
+          window['DOCS_OPTIONS'] = {
+  "docsMode": true,
+  "defaultName": "Docs",
+  "autodocs": "tag"
+};
+        
+      
+        
+          window['CONFIG_TYPE'] = "PRODUCTION";
+        
+      
+        
+      
+        
+      
+    </script>
+    
+
+    <script type="module">
+      import './sb-manager/runtime.js';
+
+      
+      import './sb-addons/essentials-controls-0/manager-bundle.js';
+      
+      import './sb-addons/essentials-actions-1/manager-bundle.js';
+      
+      import './sb-addons/essentials-backgrounds-2/manager-bundle.js';
+      
+      import './sb-addons/essentials-viewport-3/manager-bundle.js';
+      
+      import './sb-addons/essentials-toolbars-4/manager-bundle.js';
+      
+      import './sb-addons/essentials-measure-5/manager-bundle.js';
+      
+      import './sb-addons/essentials-outline-6/manager-bundle.js';
+      
+      import './sb-addons/storybook-7/manager-bundle.js';
+      
+    </script>
+
+    <link href="./sb-preview/runtime.js" rel="prefetch" as="script" />
+  </body>
+</html>

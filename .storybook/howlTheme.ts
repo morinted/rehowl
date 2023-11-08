@@ -34,4 +34,4 @@ export default create({
 
   brandTitle: 'Rehowl',
   brandUrl: 'https://tedmor.in/rehowl',
-});
+})

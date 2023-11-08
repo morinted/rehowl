@@ -1,6 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { useHowl, Play } from '../src'
+import * as React from 'react'
+const { useState, useEffect, useRef } = React
+import { useHowl } from '../src/useHowl'
+import { Play } from '../src/Play'
 import { action } from '@storybook/addon-actions'
+import type { Meta, StoryFn } from '@storybook/react'
 
 // @ts-ignore
 import sound1 from './static/audio/sound1.mp3'
@@ -9,19 +12,22 @@ import sound2mp3 from './static/audio/sound2.mp3'
 // @ts-ignore
 import sound2web from './static/audio/sound2.webm'
 
-export default {
-  title: 'Components|<Play />',
+const meta = {
+  title: 'Components/Play',
   component: Play,
-}
+  tags: ['autodocs'],
+} satisfies Meta<typeof Play>
+export default meta
 
-const PlayPauseButton = ({ play, setPlay }) =>
+type Story = StoryFn<typeof Play>
+
+const PlayPauseButton = ({ play, setPlay }) => (
   <p>
-    <button onClick={() => setPlay(!play)}>
-      {play ? 'Pause ⏸' : 'Play ▶'}
-    </button>
+    <button onClick={() => setPlay(!play)}>{play ? 'Pause ⏸' : 'Play ▶'}</button>
   </p>
+)
 
-export const renderPlay = () => {
+export const renderPlay: Story = () => {
   const { howl, state } = useHowl({ src: sound1 })
   const [play, setPlay] = useState(false)
   return (
@@ -29,16 +35,16 @@ export const renderPlay = () => {
       <p>Sound stops when the Play component is unmounted.</p>
       <p>State: {state}</p>
       <PlayPauseButton play={play} setPlay={setPlay} />
-      {play ?
+      {play ? (
         <Play howl={howl}>
           {({ playing }) => <>This is the child of the play component! Playing: {playing().toString()}</>}
-        </Play> : null
-      }
+        </Play>
+      ) : null}
     </>
   )
 }
 
-export const noPreload = () => {
+export const noPreload: Story = () => {
   const { howl, state, load, error } = useHowl({ src: sound1, preload: false })
   const [play, setPlay] = useState(false)
   useEffect(() => {
@@ -50,21 +56,23 @@ export const noPreload = () => {
       <p>State: {state}</p>
       {state === 'unloaded' && <button onClick={() => load()}>Load</button>}
       <PlayPauseButton play={play} setPlay={setPlay} />
-      {play &&
+      {play && (
         <Play howl={howl} onPlayError={action('onPlayError')}>
           {({ playing }) => <>Playing: {playing().toString()}</>}
         </Play>
-      }
+      )}
     </>
   )
 }
 
-export const stop = () => {
+export const stop: Story = () => {
   const { howl, state } = useHowl({ src: sound1 })
   const [play, setPlay] = useState(false)
   return (
     <>
-      <p>This component is being stopped with the <code>stop</code> prop.</p>
+      <p>
+        This component is being stopped with the <code>stop</code> prop.
+      </p>
       <p>State: {state}</p>
       <PlayPauseButton play={play} setPlay={setPlay} />
       <Play howl={howl} stop={!play} onStop={action('onStop')} onPlay={action('onPlay')}>
@@ -74,12 +82,12 @@ export const stop = () => {
   )
 }
 
-export const rate = () => {
+export const rate: Story = () => {
   const { howl, state } = useHowl({ src: sound1 })
   const [play, setPlay] = useState(false)
   const [rate, setRate] = useState(2)
-  const decreaseRate = () => setRate(rate => Math.max(rate - 0.5, 0.5))
-  const increaseRate = () => setRate(rate => Math.min(rate + 0.5, 4))
+  const decreaseRate = () => setRate((rate) => Math.max(rate - 0.5, 0.5))
+  const increaseRate = () => setRate((rate) => Math.min(rate + 0.5, 4))
   return (
     <>
       <p>Control the rate of playback.</p>
@@ -101,12 +109,14 @@ export const rate = () => {
   )
 }
 
-export const pause = () => {
+export const pause: Story = () => {
   const { howl, state } = useHowl({ src: sound1 })
   const [play, setPlay] = useState(false)
   return (
     <>
-      <p>Control playback with the <code>pause</code> prop.</p>
+      <p>
+        Control playback with the <code>pause</code> prop.
+      </p>
       <p>State: {state}</p>
       <PlayPauseButton play={play} setPlay={setPlay} />
       <Play howl={howl} pause={!play} onPlay={action('onPlay')} onPause={action('onPause')}>
@@ -116,7 +126,7 @@ export const pause = () => {
   )
 }
 
-export const volume = () => {
+export const volume: Story = () => {
   const { howl, state } = useHowl({ src: sound1 })
   const [play, setPlay] = useState(false)
   const [volume, setVolume] = useState(0.5)
@@ -133,7 +143,7 @@ export const volume = () => {
           max={1}
           step={0.05}
           value={volume}
-          onChange={event => setVolume(parseFloat(event.target.value))}
+          onChange={(event) => setVolume(parseFloat(event.target.value))}
         />
       </div>
       <PlayPauseButton play={play} setPlay={setPlay} />
@@ -146,7 +156,7 @@ export const volume = () => {
   )
 }
 
-export const mute = () => {
+export const mute: Story = () => {
   const { howl, state } = useHowl({ src: sound1 })
   const [play, setPlay] = useState(false)
   const [mute, setMute] = useState(true)
@@ -157,16 +167,16 @@ export const mute = () => {
       <p>
         {mute ? 'Muted.' : 'Unmuted.'} <button onClick={() => setMute(!mute)}>{mute ? 'Unmute 🔊' : 'Mute 🔇'}</button>
       </p>
-      {play &&
+      {play && (
         <Play howl={howl} mute={mute} onPlay={action('onPlay')} onMute={action('onMute')}>
           {({ playing }) => <>Playing: {playing().toString()}</>}
         </Play>
-      }
+      )}
     </>
   )
 }
 
-export const fade = () => {
+export const fade: Story = () => {
   const { howl, state } = useHowl({ src: sound1 })
   const [play, setPlay] = useState(false)
   const [silent, setSilent] = useState<undefined | boolean>(undefined)
@@ -222,7 +232,7 @@ export const fade = () => {
   )
 }
 
-export const seekWithScrubberBar = () => {
+export const seekWithScrubberBar: Story = () => {
   const { howl } = useHowl({ src: sound1 })
   const [targetSeek, setTargetSeek] = useState(0)
   const [play, setPlay] = useState(false)
@@ -255,7 +265,7 @@ export const seekWithScrubberBar = () => {
         <input
           type="checkbox"
           checked={pauseDuringScrub}
-          onChange={event => setPauseDuringScrub(event.target.checked)}
+          onChange={(event) => setPauseDuringScrub(event.target.checked)}
           id="pause-during-scrub"
         />
         <label htmlFor="pause-during-scrub">Pause while scrubbing</label>
@@ -282,7 +292,7 @@ export const seekWithScrubberBar = () => {
                 max={length}
                 value={position}
                 step={0.1}
-                onChange={e => {
+                onChange={(e) => {
                   const changedPosition = parseFloat(e.target.value)
                   // Remove false positives caused by slow seek() update time.
                   setTargetSeek(changedPosition)
@@ -298,7 +308,7 @@ export const seekWithScrubberBar = () => {
   )
 }
 
-export const basicSprite = () => {
+export const basicSprite: Story = () => {
   const [digit, setDigit] = useState(0)
   const [loop, setLoop] = useState(false)
   const { howl, state } = useHowl({
@@ -314,13 +324,13 @@ export const basicSprite = () => {
   return (
     <>
       <p>
-        All these digits are loaded from a single sound file and are controlled by one Howl.
-        The Play component will automatically start playing when the selected sprite changes.
+        All these digits are loaded from a single sound file and are controlled by one Howl. The Play component will
+        automatically start playing when the selected sprite changes.
       </p>
       <p>Selected digit: {digit}</p>
       <p>State: {state}</p>
       <div>
-        {[1, 2, 3, 4, 5].map(digit => (
+        {[1, 2, 3, 4, 5].map((digit) => (
           <button
             key={digit}
             onClick={() => {
@@ -332,15 +342,13 @@ export const basicSprite = () => {
         ))}
       </div>
       <button onClick={() => setLoop(!loop)}>{loop ? 'Disable Looping' : 'Enable Looping'}</button>
-      {digit > 0 ?
-        <Play howl={howl} sprite={`${digit}`} loop={loop} /> : null
-      }
+      {digit > 0 ? <Play howl={howl} sprite={`${digit}`} loop={loop} /> : null}
     </>
   )
 }
 
-type Digits = { digit: number, time: number }[]
-export const complexSprite = () => {
+type Digits = { digit: number; time: number }[]
+export const complexSprite: Story = () => {
   const [digits, setDigits] = useState<Digits>([])
   const [playBeat, setPlayBeat] = useState(false)
   const { howl, state } = useHowl({
@@ -356,22 +364,16 @@ export const complexSprite = () => {
   })
   return (
     <>
-      <p>
-        All these sounds are loaded from a single sound file on one Howl.
-      </p>
-      <p>
-        Every time you click a digit, a Play is rendered and played until onEnd is called.
-      </p>
-      <p>
-        Go ahead, play a few sounds at once.
-      </p>
+      <p>All these sounds are loaded from a single sound file on one Howl.</p>
+      <p>Every time you click a digit, a Play is rendered and played until onEnd is called.</p>
+      <p>Go ahead, play a few sounds at once.</p>
       <p>State: {state}</p>
       <div>
-        {[1, 2, 3, 4, 5].map(digit => (
+        {[1, 2, 3, 4, 5].map((digit) => (
           <button
             key={digit}
             onClick={() => {
-              setDigits(digits => [...digits, { digit, time: Date.now() }])
+              setDigits((digits) => [...digits, { digit, time: Date.now() }])
             }}
           >
             {digit}
@@ -382,7 +384,7 @@ export const complexSprite = () => {
       <button
         onClick={() => {
           const now = Date.now()
-          setDigits(digits => [
+          setDigits((digits) => [
             ...digits,
             { digit: 5, time: now },
             { digit: 4, time: now + 1 },
@@ -404,8 +406,8 @@ export const complexSprite = () => {
             sprite={`${digit}`}
             key={time}
             onEnd={() =>
-              setDigits(digits => {
-                const targetIndex = digits.findIndex(x => x.time === time)
+              setDigits((digits) => {
+                const targetIndex = digits.findIndex((x) => x.time === time)
                 if (targetIndex < 0) return digits
                 return [...digits.slice(0, targetIndex), ...digits.slice(targetIndex + 1)]
               })
@@ -423,25 +425,28 @@ export const complexSprite = () => {
   )
 }
 
-export const errorBadSRC = () => {
+export const errorBadSRC: Story = () => {
   const { howl, state, error } = useHowl({ src: 'fake' })
   return (
     <>
-      {error && <p>Error: {[error.id, error.message].filter(x => x).join(' ')} </p>}
+      {error && <p>Error: {[error.id, error.message].filter((x) => x).join(' ')} </p>}
       <p>State: {state}</p>
       <Play howl={howl} />
     </>
   )
 }
 
-export const howlDefaultVolume = () => {
+export const howlDefaultVolume: Story = () => {
   const [defaultVolume, setDefaultVolume] = useState(0)
   const [playVolume, setPlayVolume] = useState(0)
   const { howl } = useHowl({ src: sound1, defaultVolume })
   const [play, setPlay] = useState(false)
   return (
     <>
-      <p>Default volume on the howl is 0 to prevent clipping on quiet plays. This example is used for debug on slower devices such as phones.</p>
+      <p>
+        Default volume on the howl is 0 to prevent clipping on quiet plays. This example is used for debug on slower
+        devices such as phones.
+      </p>
       <div>
         <label>
           <input
@@ -449,7 +454,7 @@ export const howlDefaultVolume = () => {
             name="default-volume"
             checked={defaultVolume === 0}
             value={0}
-            onChange={event => {
+            onChange={(event) => {
               if (event.target.checked) {
                 setDefaultVolume(0)
               }
@@ -463,7 +468,7 @@ export const howlDefaultVolume = () => {
             name="default-volume"
             checked={defaultVolume === 1}
             value={1}
-            onChange={event => {
+            onChange={(event) => {
               if (event.target.checked) {
                 setDefaultVolume(1)
               }
@@ -479,7 +484,7 @@ export const howlDefaultVolume = () => {
             name="play-volume"
             checked={playVolume === 0}
             value={0}
-            onChange={event => {
+            onChange={(event) => {
               if (event.target.checked) {
                 setPlayVolume(0)
               }
@@ -493,7 +498,7 @@ export const howlDefaultVolume = () => {
             name="play-volume"
             checked={playVolume === 1}
             value={1}
-            onChange={event => {
+            onChange={(event) => {
               if (event.target.checked) {
                 setPlayVolume(1)
               }
@@ -504,14 +509,12 @@ export const howlDefaultVolume = () => {
       </div>
       <PlayPauseButton play={play} setPlay={setPlay} />
 
-      {play &&
-        <Play howl={howl} volume={playVolume} seek={0.5} />
-      }
+      {play && <Play howl={howl} volume={playVolume} seek={0.5} />}
     </>
   )
 }
 
-export const swapSource = () => {
+export const swapSource: Story = () => {
   const srcs = ['nonexistent.mp3', sound1, sound2mp3]
   const [useHtml5, setUseHtml5] = useState(false)
   const [src, setSrc] = useState(srcs[0])
@@ -521,8 +524,10 @@ export const swapSource = () => {
       <p>Every time a setting is changed on useHowl or Rehowl, the howl instance is reconstructed.</p>
       <p>It's better to load multiple howls and use Play components than swap the source on a single howl.</p>
       <p>In this example, you can change the howl's src and whether it's using HTML5 Audio or Web Audio.</p>
-      <h3>Select a sound to play</h3>
-      {srcs.map(srcChoice => (
+      <p>
+        <strong>Select a sound to play</strong>
+      </p>
+      {srcs.map((srcChoice) => (
         <div key={srcChoice}>
           <label>
             <input
@@ -530,7 +535,7 @@ export const swapSource = () => {
               name="source"
               checked={srcChoice === src}
               value={srcChoice}
-              onChange={event => {
+              onChange={(event) => {
                 if (event.target.checked) {
                   setSrc(srcChoice)
                 }
@@ -541,12 +546,14 @@ export const swapSource = () => {
         </div>
       ))}
       <label style={{ display: 'block', marginTop: '1rem' }}>
-        <input type="checkbox" checked={useHtml5} onChange={event => setUseHtml5(event.target.checked)} id="html5" />
+        <input type="checkbox" checked={useHtml5} onChange={(event) => setUseHtml5(event.target.checked)} id="html5" />
         Use HTML 5 Audio
       </label>
 
-      <h3>Info</h3>
-      {error && <p>Error: {[error.id, error.message].filter(x => x).join(' ')} </p>}
+      <p>
+        <strong>Info</strong>
+      </p>
+      {error && <p>Error: {[error.id, error.message].filter((x) => x).join(' ')} </p>}
       <p>State: {state}</p>
 
       <Play howl={howl}>{({ playing }) => <>Playing: {playing().toString()}</>}</Play>

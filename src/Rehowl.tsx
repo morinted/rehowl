@@ -1,4 +1,5 @@
-import useHowl, { IUseHowlState, IUseHowlOptions } from './useHowl'
+import { useHowl } from './useHowl'
+import type { IUseHowlState, IUseHowlOptions } from './useHowl'
 
 interface Props extends IUseHowlOptions {
   /** Child component that receives render props. */
@@ -11,8 +12,8 @@ interface Props extends IUseHowlOptions {
  * Recommended when using Rehowl from a class component. If you're
  * using a function component, it's best to use `useHowl`.
  */
-export default function Rehowl(props: Props) {
-  const { children, src, sprite, format, html5, preload, xhrWithCredentials } = props
+export function Rehowl(props: Props) {
+  const { children, src, sprite, format, html5, preload, xhr } = props
 
   const { howl, error, state, load } = useHowl({
     src,
@@ -20,7 +21,7 @@ export default function Rehowl(props: Props) {
     format,
     html5,
     preload,
-    xhrWithCredentials,
+    xhr,
   })
 
   if (!children || !howl) return null

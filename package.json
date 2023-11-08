@@ -1,6 +1,6 @@
 {
   "name": "rehowl",
-  "version": "0.6.0",
+  "version": "1.0.0",
   "description": "Opinionated React wrapper for Howler.js",
   "main": "lib/index.js",
   "type": "module",

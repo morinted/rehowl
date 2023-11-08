@@ -17,11 +17,11 @@ An opinionated React wrapper for [howler.js](https://howlerjs.com/)
 Rehowl has react and howler as peer dependencies so that you can manage your own versions.
 
 ```sh
-npm install --save-dev howler rehowl
+npm install howler rehowl
 ```
 
 ```sh
-yarn add -D howler rehowl
+yarn add howler rehowl
 ```
 
 ## Documentation and Live Examples
@@ -42,9 +42,7 @@ import bark from './assets/bark.mp3'
 
 const Autoplay = () => {
   const { howl, state } = useHowl({ src: bark })
-  return (
-    <Play howl={howl} />
-  )
+  return <Play howl={howl} />
 }
 ```
 
@@ -64,5 +62,3 @@ There are a few issues that make ReactHowler unsuitable for my needs:
 Overall, it feels much more like a barebones wrapper for Howler that doesn't really give you any help when trying to integrate it into your components.
 
 My main goals in this project are to make a library that feels like Howler, if Howler were built for React.
-
-

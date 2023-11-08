@@ -7741,9 +7741,9 @@ __metadata:
   linkType: hard
 
 "kind-of@npm:^6.0.2":
-  version: 6.0.2
-  resolution: "kind-of@npm:6.0.2"
-  checksum: 705109f53f5abc91d187dddaa3022a008ad7fae3f13add7bb3c586e20a7c048e2e03a6e304658247d44680cc0e4c8a7a0081ccf1a73999fb3c9b7b23b48a2a1e
+  version: 6.0.3
+  resolution: "kind-of@npm:6.0.3"
+  checksum: 61cdff9623dabf3568b6445e93e31376bee1cdb93f8ba7033d86022c2a9b1791a1d9510e026e6465ebd701a6dd2f7b0808483ad8838341ac52f003f512e0b4c4
   languageName: node
   linkType: hard
 

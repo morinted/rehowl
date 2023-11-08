@@ -2,14 +2,14 @@
   "compilerOptions": {
     "target": "es5",
     "lib": ["es6", "dom"],
-    "module": "esnext",
+    "module": "NodeNext",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "declaration": true,
     "outDir": "./lib",
     "strict": true,
     "jsx": "react",
-    "moduleResolution": "node"
+    "moduleResolution": "NodeNext"
   },
   "include": ["src"],
   "exclude": ["node_modules", "stories"]

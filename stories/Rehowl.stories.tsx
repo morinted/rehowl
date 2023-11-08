@@ -1,7 +1,7 @@
 import * as React from 'react'
 const { useState } = React
-import { Rehowl } from '../src/Rehowl'
-import { Play } from '../src/Play'
+import { Rehowl } from '../src/Rehowl.js'
+import { Play } from '../src/Play.js'
 // @ts-ignore
 import sound1 from './static/audio/sound1.mp3'
 import type { Meta, StoryFn } from '@storybook/react'

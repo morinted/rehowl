@@ -1,3 +1,3 @@
-export { Rehowl } from './Rehowl'
-export { useHowl } from './useHowl'
-export { Play } from './Play'
+export { Rehowl } from './Rehowl.js'
+export { useHowl } from './useHowl.js'
+export { Play } from './Play.js'

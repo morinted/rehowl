@@ -1,5 +1,5 @@
-import { useHowl } from './useHowl'
-import type { IUseHowlState, IUseHowlOptions } from './useHowl'
+import { useHowl } from './useHowl.js'
+import type { IUseHowlState, IUseHowlOptions } from './useHowl.js'
 
 interface Props extends IUseHowlOptions {
   /** Child component that receives render props. */

@@ -1,7 +1,7 @@
 import * as React from 'react'
 const { useState, useEffect, useRef } = React
-import { useHowl } from '../src/useHowl'
-import { Play } from '../src/Play'
+import { useHowl } from '../src/useHowl.js'
+import { Play } from '../src/Play.js'
 import { action } from '@storybook/addon-actions'
 import type { Meta, StoryFn } from '@storybook/react'
 
@@ -21,7 +21,7 @@ export default meta
 
 type Story = StoryFn<typeof Play>
 
-const PlayPauseButton = ({ play, setPlay }) => (
+const PlayPauseButton = ({ play, setPlay }: { play: boolean; setPlay: (playing: boolean) => void }) => (
   <p>
     <button onClick={() => setPlay(!play)}>{play ? 'Pause ⏸' : 'Play ▶'}</button>
   </p>
